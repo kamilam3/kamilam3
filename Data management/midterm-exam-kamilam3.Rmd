@@ -1,0 +1,266 @@
+---
+title: "STAT 440 Statistical Data Management - Fall 2021"
+output: html_document
+---
+
+## Midterm Exam 
+### Due: Monday October 18, 2021 11:59 pm US Central Time
+#### Created by Course staff
+
+Grading Rubric (per question):  
+2 points if complete and correct  
+1 point if incomplete or incorrect  
+0 points if no attempt made  
+
+
+**Retrieving your work**
+
+This .md file is written in Markdown. The .md file is rendered as an .html file for easier viewing. This is located in the **exams** directory within the **stat440-fa21-course-content** repo, i.e. **stat440-fa21-course-content/exams** in GitHub. It is always recommended that you **pull** (or refresh) the **stat440-fa21-course-content** repo to ensure that you have the most updated version of all course content.
+
+**Submitting your work**
+
+In your individual student repo (named as your netID), you are to submit ***two*** files:
+
+a. Your reproducible document file (.Rmd or .ipynb) which should be saved as midterm-exam-netID.Rmd or midterm-exam-netID.ipynb. For example, my midterm file would be saved as midterm-exam-kinson2.Rmd.
+
+b. Your rendered reproducible document file (.html) which should be saved as midterm-exam-netID.html. For example, my midterm file would be saved as midterm-exam-kinson2.html.
+
+You have an unlimited number of submissions, but only the latest proper submission (commit and push) will be viewed and graded. **Remember the .Rmd or .ipynb file needs to render properly to .html before submitting.** 
+
+
+***
+
+All students are expected to complete all problems.
+
+*The following problems should be completed by you as an individual. If any problem asks you a particular question, be sure to answer it completely (with code, written sentences, or both). Written sentences should not appear in code chunks or code cells. Written sentences should appear in Markdown syntax unless specifically stated otherwise.*
+
+***Do not change anything in this file above the double line.***
+
+***
+***
+
+### Use only one programming language for this entire assignment. Use the URLs to access the data (if any). No local files allowed. Functions or programming ideas beyond the topics/ideas covered thus far are not allowed. The `subset()` function is never allowed in this course. Only use `set.seed()` when instructed.
+
+**#1** Using Markdown syntax, make a numbered list with your first name in normal text as the first item and your last name in bold and italic text as the second item.
+
+1. Kamila
+2. ***Makhambetova***
+
+
+**#2**  Suppose a dataset you were importing contained a date (and time) column with all entries appearing in the following format "Monday/2020Nov16/12:01". The correct format (written as percents, letters, or other characters) you should use for parsing this column is "____". **Write your answer that fills in the blank below (Markdown syntax).** *Note that the quotes are already present.*
+<br>
+<br>
+**Answer**
+<br>
+format='%a/%Y%b%d/%H:%M'
+<br>
+as_datetime("Monday/2020Nov16/12:01",format='%a/%Y%b%d/%H:%M')
+
+**#3** **Semi-structured** data is human readable text, much like a book, that has been stored in a .txt or .pdf file. If the text in bold is the word or phrase that makes the statement true, then write TRUE below in all caps. If the text in bold is the word or phrase that makes the statement false, then write FALSE below in all caps followed by a period, and write the correct term in bold text after the period. For example, FALSE. **newword**
+<br>
+<br>
+**Answer**
+<br>
+FALSE. **Unstructured data**
+
+**#4** The `sum()` function is an example of **vectorization** because it takes a vector as input and returns a single summary value. If the text in bold is the word or phrase that makes the statement true, then write TRUE below in all caps. If the text in bold is the word or phrase that makes the statement false, then write FALSE below in all caps followed by a period, and write the correct term in bold text after the period. For example, FALSE. **newword**
+<br>
+<br>
+**Answer**
+<br>
+TRUE (in R)
+
+**#5** There are three ways to interact with this course: (1) using GHE in the browser, (2) using Git from the command line, (3) using a Git client such as RStudio or Jupyter Lab via an extension. If the statement is true, then write TRUE below in all caps. Otherwise, write FALSE below in all caps.
+<br>
+<br>
+**Answer**
+<br>
+TRUE
+  
+**#6** **GMOing** is the Git term for copying an existing repo so that it can be accessed remotely on your local machine. If the text in bold is the word or phrase that makes the statement true, then write TRUE below in all caps. If the text in bold is the word or phrase that makes the statement false, then write FALSE below in all caps followed by a period, and write the correct term in bold text after the period. For example, FALSE. **newword** 
+<br>
+<br>
+**Answer**
+<br>
+FALSE. **Cloning**
+
+
+**#7** Import the National Popular Baby Names Data using one programming language software and the GHE data URL https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/popular-baby-names-national-data.csv or Box data URL https://uofi.box.com/shared/static/c2whskv4x21w9pok3qxfh2kdz7jxk1g4.csv. Now, print the structure of the data. **This structure should match the data description below.** 
+
+  - The dataset (a .csv file) contains 658127 rows and 4 columns. The data is a combination of popular baby names by sex (F for female or M for male), frequency, and year from 2001 to 2020 in the US. The baby names come from Social Security records. Soon after a child is born in the US, the parent(s) file for a Social Security card. This data does not include baby names with frequencies less than 5. The original source is the Social Security Administration https://www.ssa.gov/oact/babynames/limits.html.
+  
+```{r}
+library(tidyverse)
+baby_names<-read_csv("https://uofi.box.com/shared/static/c2whskv4x21w9pok3qxfh2kdz7jxk1g4.csv.")
+str(baby_names)
+```
+
+
+**#8** Import the Illinois Popular Baby Names Data using one programming language software and the GHE data URL https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/popular-baby-names-illinois-data.TXT or Box data URL https://uofi.box.com/shared/static/ttc01y8x71eadmzc9ramd16ksuq2xckk.txt. **You will need to create the column names for the data because they do not exist within the file itself.** Now, print the first 5 rows of the data.
+
+  - The dataset (a .TXT file) contains 234613 rows and 5 columns. The data is a collection of popular baby names with the following column names: state, sex (F for female or M for male), year, name, frequency. The names are from the state of Illinois over the years 1910 to 2020. The baby names come from Social Security records. Soon after a child is born in the US, the parent(s) file for a Social Security card. This data does not include baby names with frequencies less than 5. The original source is the Social Security Administration https://www.ssa.gov/oact/babynames/limits.html.
+
+```{r}
+
+library(tidyverse)
+illinois_baby_names<-read_csv("https://uofi.box.com/shared/static/ttc01y8x71eadmzc9ramd16ksuq2xckk.txt", col_names = FALSE)
+colnames(illinois_baby_names) <- c('state','gender', 'year', 'name', 'frequency')
+head(illinois_baby_names, 5)
+```
+
+
+
+**#9** Use the imported data in **Problem 8** and a programming language applying data management concepts to answer the following question in Markdown syntax and complete sentence(s): 
+
+- For your self-identified gender, where does your name rank among the year you were born? **For female names in a given year, the name with the highest frequency is considered 1st i.e. rank 1. For female names in a given year, the name with the second highest frequency is considered 2nd i.e. rank 2. For male names in a given year, the name with the highest frequency is considered 1st i.e. rank 1. For male names in a given year, the name with the second highest frequency is considered 2nd i.e. rank 2. If your name is not listed in the data for that gender-year combination, then you can explain that your name is "not ranked."**
+
+**Your answer to the question should be written using Markdown syntax, and you should include executable code with a printed result as evidence of your answer.**
+<br>
+<br>
+**Answer**
+<br>
+My name, Kamila, takes 704 ranks among popular female names in 1998. Its frequency is 15.
+
+```{r}
+fem_names_1998<-illinois_baby_names%>%filter(year==1998)%>%
+                                      filter(gender=="F")%>%
+                                      arrange(desc(frequency))
+                  
+fem_names_1998[fem_names_1998$name=="Kamila",]
+which(fem_names_1998$name=="Kamila")
+
+```
+
+
+
+**#10** The Instructor's daughter's name is Xena. Which year is that name the most frequently occurring in Illinois? Use the imported dataset in **Problem 8** and a programming language applying data management concepts to answer the question. **Your answer to the question should be written using Markdown syntax, and you should include executable code with a printed result as evidence of your answer.**
+<br>
+<br>
+**Answer**
+<br>
+The name Xena is the most frequently occured in 1996 year with frequency=15.
+
+```{r}
+fem_name_Xena<-illinois_baby_names%>%filter(name=="Xena")%>%
+                                      filter(gender=="F")%>%
+                                      arrange(desc(frequency))
+head(fem_name_Xena,5)
+```
+
+
+**#11** Create a subset of the imported data in **Problem 7** that only includes baby names within the range "We" - "Za" (endpoints are inclusive). **"We" means names with "W" as the first letter and "e" as the second letter, such as "Weston". "Za" means names with "Z" as the first letter and "a" as the second letter. The range "We" to "Za" includes names such as "Weston", "Xiang", "Yury", and "Zavion." This range excludes names like "Wanda" and "Zinia." Now, print a random sample (using the programming language's randomization methods) of 10 rows from this subset. There should be 4 columns in the result.**
+
+```{r}
+library(tidyverse)
+
+names_We_Za<- baby_names[str_detect(baby_names$name,"^[W-W][e-z]|^[X-Y][a-z]|^[Z-Z][a-a]"),]
+names_We_Za[sample(nrow(names_We_Za),10),]
+
+```
+
+
+**#12** Using the imported data in **Problem 8**, create a new data object named "a_names" that (in this order):
+
+- filters the observations such that the names begin with the letter "A" and the year equals 2001
+
+- mutates a new column called "len" which equals the number of letters in each baby name
+
+- mutates a new column called "overall_rank" which assigns the number 1 to the name with the highest frequency regardless of sex; **if there is a tie in frequency, then the name with the smallest "len" receives a lower rank number; if there is a tie in "len" then the name beginning with the earliest letter in the alphabet receives a lower rank number; for example, if Chris, Kris, and Cris are tied in frequency, then the rank in parentheses among these three names would be Cris (1), Kris (2), Chris (3).**
+
+- arranges the data by "overall_rank" in ascending order
+
+Now, print the first 10 observations of the "a_names" data set.
+
+```{r}
+
+a_names<-illinois_baby_names%>%
+         filter(str_detect(illinois_baby_names$name, "[A]+"))%>%
+         filter(year==2001)%>%
+         mutate(len=nchar(name))%>% 
+         arrange(desc(frequency),len,name)
+
+overall_rank2=1:nrow(a_names)
+
+a_names<-a_names%>% 
+         mutate(overall_rank=overall_rank2)
+
+head(a_names,10)
+
+```
+
+
+**#13** Which letter of the alphabet is the most commonly used among all names in the year 2020? Use the imported dataset in **Problem 7** and a programming language applying data management concepts to answer the question. **Your answer to the question should be written using Markdown syntax, and you should include executable code with a printed result as evidence of your answer.**
+<br>
+<br>
+**Answer**
+<br>
+The letter "a" is the most commonly used among all names in 2020, as its frequency=32811. 
+
+```{r}
+
+names_2020<-baby_names%>%
+            filter(year==2020)
+
+split_letters <- unlist(strsplit(names_2020$name, split = ""))
+split_letters <- tolower(split_letters)
+char_frequencies <- as.data.frame(table(split_letters))
+char_frequencies%>%arrange(desc(Freq))%>%
+                   head(.,10)
+
+
+
+```
+
+
+**#14** Which sex's set of names has the largest total frequency? Use the imported dataset in **Problem 8** and a programming language applying data management concepts to answer the question. **Your answer to the question should be written using Markdown syntax, and you should include executable code with a printed result as evidence of your answer.**
+<br>
+<br>
+**Answer**
+<br>
+Male set of names has the largest total frequency. The total frequency equals to 8277453.
+
+```{r}
+
+fem_illinois_baby_names<-illinois_baby_names%>% filter(gender=="F")
+male_illinois_baby_names<-illinois_baby_names%>% filter(gender=="M")
+fem_tot_freq=sum(fem_illinois_baby_names$frequency)
+male_tot_freq=sum(male_illinois_baby_names$frequency)
+if(fem_tot_freq>male_tot_freq){
+  print(paste0("Female set of names has the largest total frequency: ", fem_tot_freq))
+} else{
+  print(paste0("Male set of names has the largest total frequency: ", male_tot_freq))
+}
+
+```
+
+
+
+**#15** Are short names or long names represented more in the data? Use the imported dataset in **Problem 7** and a programming language applying data management concepts to answer the question. **A short name is defined as at or below the 1st quartile in length of characters. A long name is defined as at or above the 3rd quartile in length of characters.** **Your answer to the question should be written using Markdown syntax, and you should include executable code with a printed result as evidence of your answer.**
+<br>
+<br>
+**Answer**
+<br>
+Short names are represented more in the data as the total frequency of short names = 29105459.
+```{r}
+baby_names_len<-baby_names%>%
+                mutate(len=nchar(name))
+quant=quantile(baby_names_len$len)
+
+quant1=quant[2]
+quant3=quant[4]
+
+short_names<-baby_names_len%>%filter(len<=quant1)
+long_names<-baby_names_len%>%filter(len>=quant3)
+short_freq<-sum(short_names$freq)
+long_freq<-sum(long_names$freq)
+
+if(short_freq>long_freq){
+  print(paste0("Short names are represented more in the data with total frequency = ", short_freq))
+} else{
+  print(paste0("Long names are represented more in the data with total frequency = ", long_freq))
+}
+
+
+```
+
+

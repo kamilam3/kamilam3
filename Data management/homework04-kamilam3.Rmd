@@ -1,0 +1,333 @@
+---
+title: "STAT 440 Statistical Data Management - Fall 2021"
+output: html_document
+---
+
+## Homework04
+### Due: Wednesday November 03, 2021 11:59 pm US Central Time
+#### Created by Course Staff
+
+Grading Rubric (per question):  
+2 points if complete and correct  
+1 point if incomplete or incorrect  
+0 points if no attempt made  
+
+
+**Retrieving your work**
+
+This and all future homework .md files are written in Markdown. The .md file is rendered as an .html file for easier viewing. This and all future homework assignments are located in the **homework** directory within the **stat440-fa21-course-content** repo, i.e. **stat440-fa21-course-content/homework** in GHE. It is always recommended that you **pull** (or refresh) the **stat440-fa21-course-content** repo to ensure that you have the most updated version of all course content including the homework assignments. After pulling (or refreshing) the **stat440-fa21-course-content** repo, the homework file will be in the homework directory. Once you have accessed the .md file, copy all text from the .md file and paste all text into your reproducible document file (either .Rmd or .ipynb file). 
+
+**Submitting your work**
+
+In your individual student repo (named as your netID), you are to submit ***two*** files:
+
+a. Your reproducible document file (either .Rmd or .ipynb file) which should be saved as homework##-netID.Rmd or homework##-netID.ipynb depending on your preferred software. For example, my homework 01 file would be saved as homework01-kinson2.Rmd.
+
+b. Your rendered reproducible document file (.html) which should be saved as homework##-netID.html. For example, my homework 01 file would be saved as homework01-kinson2.html.
+
+**Do not place your files in a sub-directory (or folder).** You have an unlimited number of submissions, but only the latest proper submission (commit and push) will be viewed and graded. You are allowed to only use one software language per homework file. This means that you cannot mix software languages (R and Python) in one single homework file. **Remember the .Rmd (or .ipynb) file needs to render properly to .html before submitting.** 
+
+
+***
+
+Undergraduates are expected to complete the problems **#1-#8**. Graduate students are expected to complete all problems.
+
+**The following problems should be completed by you as an individual. If any problem asks you a particular question, be sure to answer it completely (with code, written sentences, or both). Written sentences should not appear in code chunks or code cells. Written sentences should appear in Markdown syntax unless specifically stated otherwise.**
+
+***Do not change anything in this file above the double line. Doing so will prevent your homework from being graded.***
+
+***
+***
+
+### Use only one programming language for this entire homework assignment. Use the URLs to access the data (if any). No local files allowed.
+
+**#1** (Markdown) Using Markdown syntax, make a numbered list with your first name in normal text as the first item and your last name in bold text as the second item.
+
+1. Kamila
+2. **Makhambetova**
+
+
+**#2** (Loops and conditional execution, Summarizing data, Markdown) 
+
+statement: **For loops** can be used to handle grouped data summarization. 
+
+If the text in bold is the term that makes the statement true, then write TRUE below in all caps. If the text in bold is the term that makes the statement false, then write FALSE below in all caps and write the correct term in bold text in a new line under FALSE.
+<br>
+<br>
+TRUE
+<br>
+<br>
+
+**#3** (Validating data, Cleaning data, Markdown) 
+
+statement: **Condition-controlled loops** are those in which repetitive actions are repeated for a predetermined number of times and stopped when the that number of times is reached. 
+
+If the text in bold is the term that makes the statement true, then write TRUE below in all caps. If the text in bold is the term that makes the statement false, then write FALSE below in all caps and write the correct term in bold text in a new line under FALSE.
+<br>
+<br>
+FALSE
+<br>
+**Index controlled loop**
+<br>
+<br>
+
+**#4** (Accessing and importing data) Import the subsets of the IRI Academic Data (existing as three separate data sets) and print the structure of each separate data set using one programming language and the data URLs below. Additionally, you should read the data keys in the [data key GHE link](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/iri-data-key.pdf) or [data key Box link](https://uofi.box.com/shared/static/pg7u97n4rkqql5o0bg736zumrn8n1lgg.pdf) and the data description below:
+
+- [ads-demo - GHE data URL](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/ads-demo440-data.csv) or [ads-demo - Box data URL](https://uofi.box.com/shared/static/9b9ecldtxkr23wb3uc36wwbn2l5ylpyx.csv)
+
+- [trips - GHE data URL](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/trips440-data.txt) or [trips - Box data URL](https://uofi.box.com/shared/static/0pyqnfpl40kr5do7fue8t85vva11ynjm.txt)
+
+- [delivery-stores - GHE data URL](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/delivery-stores440-data) or [delivery-stores - Box data URL](https://uofi.box.com/shared/static/o2bqah52ioj0p0q4msvna7ixk8d9lsh4)
+
+  - The data represent sales information and customer demographics captured from select markets in the US in the year 2001, where the weeks are coded. The ads-demo data (a .csv file) contain 13983 observations and 20 columns that inform on customer ("panelist") demographics. Panelist ID is a unique identifier. The trips data (a .txt file) contain 730040 observations and 4 columns that inform on panelist shopping frequency and how much was spent. Panelists may shop at the same store multiple times in a given time period. The delivery-stores data (a file with no extension) contain 1575 observations and 7 columns that inform on the market that the store is in and estimates how much that store sells annually.
+
+```{r}
+library(tidyverse)
+
+ads_demo<-read_csv("https://uofi.box.com/shared/static/9b9ecldtxkr23wb3uc36wwbn2l5ylpyx.csv",show_col_types = FALSE)
+str(ads_demo)
+
+```
+
+```{r}
+
+trips<-read_delim("https://uofi.box.com/shared/static/0pyqnfpl40kr5do7fue8t85vva11ynjm.txt",show_col_types = FALSE)
+str(trips)
+
+```
+
+```{r}
+delivery_stores<-read_delim("https://uofi.box.com/shared/static/o2bqah52ioj0p0q4msvna7ixk8d9lsh4",show_col_types = FALSE)
+str(delivery_stores)
+```
+
+**#5** (Data reduction, Data expansion, Summarizing data) Beginning with the **trips** data set and the information in the link in **Problem 4**, use a programming language to create a new data object named `big_spender` that does the following in this order:  
+
+1. mutates a new column called "dollars999" which converts the cents values in "cents999" to dollars
+
+2. de-selects the week column
+
+3. computes the total dollars spent per panelist ID
+
+4. filters the panelists that spend over $15000 in 2001
+
+Now, print the resulting `big_spender` data.
+
+```{r}
+big_spender<-trips%>%mutate(dollars999=CENTS999/100)%>%
+             select(-c(WEEK))%>%
+             group_by(PANID)%>%
+             mutate(total_dollars_per_PANID=sum(dollars999))
+             
+big_spender<-big_spender%>%filter(total_dollars_per_PANID>15000)
+
+big_spender2<-distinct(big_spender, PANID, .keep_all = TRUE)
+head(big_spender2)
+
+             
+```
+
+
+
+**#6** (Data reduction, Data expansion, Combining data, Markdown) Use the `big_spender` data, any of the data sets in **Problem 4**, the information in the link in **Problem 4**, and a programming language applying data management concepts to answer the following question in Markdown syntax and complete sentence(s): 
+
+- Which market (location) do the panelists in `big_spender` shop in?
+
+**You must answer in Markdown syntax in a complete sentence and show code as evidence of your answer.**
+<br>
+<br>
+**Answer**
+<br>
+All 4 panelists in `big_spender` shop in PITTSFIELD.
+<br>
+<br>
+
+
+```{r}
+big_spender<-big_spender%>%rename(IRI_KEY=IRI_Key)
+big_spender_market<-merge(big_spender, delivery_stores, by = "IRI_KEY")
+big_spender_market2<-big_spender_market%>%select(PANID,Market_Name)
+big_spender_market_ID<-distinct(big_spender_market2, PANID,Market_Name, .keep_all = TRUE)
+head(big_spender_market_ID)
+
+```
+
+
+
+**#7** (Data reduction, Data expansion, Summarizing data, Regular expressions and string manipulation) Beginning with the **delivery-stores** data set and the information in the link in **Problem 4**, use a programming language to create a new data object named `southern_grocery` that does the following (in this order):  
+
+1. filters markets in southern places including: Atlanta, Birmingham, Charlotte, Dallas, Durham, Houston, Knoxville, Mississippi, Montgomery, New Orleans, Norfolk, Raleigh, Richmond, South Carolina
+
+2. mutates a new column called "single_state_market" which equals "YES" if the market name is only the name of a state and "NO" otherwise
+
+3. renames any market name that contains a city name then comma then state abbreviation to only contain the city name (e.g. "Urbana, IL" becomes "Urbana")
+
+4. renames any market name that contains a forward slash to contain a space ampersand space (e.g. "Urbana/Champaign" becomes "Urbana & Champaign")
+
+5. arranges by market name in alphabetical order
+
+Now, print the first 5 observations and last 5 observations of `southern_grocery`.
+
+```{r}
+
+south_locations=c('ATLANTA','BIRMINGHAM','CHARLOTTE','DALLAS','DURHAM','HOUSTON','KNOXVILLE','MISSISSIPPI','MONTG', 'NEW ORLEANS','NORFOLK','RALEIGH','RICHMOND','SOUTH CAROLINA')
+
+southern_grocery<-delivery_stores%>%filter(str_detect(Market_Name,str_c(south_locations,collapse="|")))
+                  
+south_st=c("MISSISSIPPI","OKLAHOMA","SOUTH CAROLINA","TEXAS")
+
+south_st_bool=rep(0,nrow(southern_grocery))
+
+for(i in 1:nrow(southern_grocery)){
+ 
+    if(southern_grocery$Market_Name[i]==south_st[1]|southern_grocery$Market_Name[i]==south_st[2]|
+       southern_grocery$Market_Name[i]==south_st[3]|southern_grocery$Market_Name[i]==south_st[4]){
+      south_st_bool[i]="YES"
+    }
+    else{
+      south_st_bool[i]="NO"
+    }
+  }
+
+southern_grocery<-southern_grocery%>%mutate(single_state_market=south_st_bool)
+
+southern_grocery$Market_Name<-str_remove_all(southern_grocery$Market_Name, ",.+")
+
+southern_grocery$Market_Name<-str_replace_all(southern_grocery$Market_Name,"/"," & ")
+
+southern_grocery<-southern_grocery%>%
+                          arrange(Market_Name)
+
+
+head(southern_grocery,5)
+tail(southern_grocery,5)
+```
+
+
+**#8** (Data reduction, Data expansion, Combining data, Markdown) Use the data in **Problem 4**, the information in the link in **Problem 4*, and a programming language applying data management concepts to answer the following question in Markdown syntax and complete sentence(s): 
+
+- Among the panelists with at least one child aged 0-17 years, which panelists spend at least one hundred dollars at each of at least 3 different grocery stores within the first 40 weeks of the year?
+
+**You must answer in Markdown syntax in a complete sentence and show code as evidence of your answer.**
+<br>
+<br>
+**Answer**
+<br>
+There are 727 panelists who spend at least 100$ in at least 3 different stores within first 40 weeks and who have at least one child aged 0-17 years. Some of them have PANID 1108225, 1108951, 1109629, 1110346, 1112805, 1114207	.
+<br>
+<br>
+
+```{r}
+#PANID 
+#Children group code 1-7
+### CENTS 999
+#1st 40 weeks of year 1114+39 week
+
+trips<-trips %>%
+  rename(IRI_KEY=IRI_Key)
+
+panid<-merge(trips, delivery_stores, by = "IRI_KEY")
+
+names(ads_demo)[1]<-'PANID'
+
+panid2<-merge(panid, ads_demo, by="PANID")
+
+panid2<-panid2%>%select(PANID, WEEK, CENTS999, `Children Group Code`, IRI_KEY )
+
+panid2<-panid2 %>% filter(`Children Group Code`==1 | `Children Group Code`==2 | `Children Group Code`==3 | `Children Group Code`==4 | `Children Group Code`==5 | `Children Group Code`==6 | `Children Group Code`==7)%>%
+     filter(WEEK<1154)%>%
+     group_by(PANID,IRI_KEY)%>%
+     mutate(total_cent_per_shop=sum(CENTS999))
+    
+    
+panid2<-panid2 %>% filter(total_cent_per_shop>=10000)
+three_shop_spender_ID<-distinct(panid2, PANID, IRI_KEY, .keep_all = TRUE)
+
+shop_count <- group_by(three_shop_spender_ID, PANID)
+shop_count2<-summarise(shop_count, shop_count = n())
+
+shop_count2<-shop_count2%>%filter(shop_count>2)
+
+head(shop_count2)
+nrow(shop_count2)
+
+```
+
+
+**#9** (Data reduction, Data expansion, Combining data, Markdown) Use the data in **Problem 4**, the information in the link in **Problem 4*, and a programming language applying data management concepts to answer the following question in Markdown syntax and complete sentence(s):  
+
+- Among any panelists who shop at the same grocery stores, how many panelists - who are renting their homes -  spend more than five hundred dollars in the first 6 months of the year?
+
+
+**You must answer in Markdown syntax in a complete sentence and show code as evidence of your answer. The statement "among any panelists who shop at the same grocery stores" means if two people shop at Store1 and 5 people shop at Store2 then these 7 panelists should be included in the result. **
+<br>
+<br>
+**Answer**
+<br>
+Among any panelists who shop at the same grocery stores, 1338 panelists - who are renting their homes -  spend more than 500 dollars in the first 6 months of the year.
+<br>
+<br>
+
+```{r}
+##panID
+##rent their homes Type of residential possession 1="Renter"
+##spend >500$ in 1st 6 months of year
+###week<1140
+### unique penalist unique stores
+
+panid_9<-merge(panid, ads_demo, by="PANID")
+
+panid_91<-panid_9%>%select(PANID, WEEK, CENTS999, `Type of Residential Possession`, IRI_KEY)
+
+panid_91<-panid_91 %>% filter(`Type of Residential Possession`==1)%>%
+     filter(WEEK<1140)%>%
+     group_by(PANID, IRI_KEY)%>%
+     mutate(total_cents_in_six_months=sum(CENTS999))
+
+panid_more_500dollars<-panid_91%>%filter(total_cents_in_six_months>50000)
+
+
+panid_more_500dollars_unique<-distinct(panid_more_500dollars, PANID, .keep_all = TRUE)
+nrow(panid_more_500dollars_unique)
+
+
+
+
+```
+
+
+
+**#10** (Data reduction, Data expansion, Combining data, Markdown) Use the data in **Problem 4**, the information in the link in **Problem 4*, and a programming language applying data management concepts to answer the following question in Markdown syntax and complete sentence(s):  
+
+- Which panelists - with more than one person living in their household - spend at least $1000 at each of 2 or more stores (if any)? 
+
+**You must answer in Markdown syntax in a complete sentence and show code as evidence of your answer.**
+
+**Answer**
+<br>
+1223 panelists  with more than one person living in their household - spend at least $1000 at each of 2 or more stores.
+<br>
+<br>
+
+
+```{r}
+
+panid_10<-panid_9%>%select(PANID, IRI_KEY, `Family Size`,CENTS999)%>%
+                    filter(`Family Size`>1)%>%
+                    group_by(PANID, IRI_KEY)%>%
+                    mutate(total_cents_in_2020=sum(CENTS999))
+
+panid_10<-panid_10%>%filter(total_cents_in_2020>=100000)
+
+shop_spender_10<-distinct(panid_10, PANID, IRI_KEY, .keep_all = TRUE)
+
+shop_count_10 <- group_by(shop_spender_10, PANID)
+shop_count_102<-summarise(shop_count_10, shop_count = n())
+
+shop_count_102<-shop_count_102%>%filter(shop_count>=2)
+
+nrow(shop_count_102)
+                 
+```
+
+

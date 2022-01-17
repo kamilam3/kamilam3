@@ -1,0 +1,83 @@
+---
+title: "Lab 2"
+author: "Kamila Makhambetova"
+date: "01 09 2021"
+output: html_document
+---
+
+# Problem 1
+
+List of names: 
+
+**1. Kamila Makhambetova** 
+
+2. Harry  Liang 
+
+3. Zhen Zhou 
+
+4. Jasmine Zhang
+
+5. Neha Bharadwaj   
+
+6. Jefferson Mathews 
+
+7. Niko Yin 
+
+8. Yanyi Lu 
+
+# Pronlem 2
+<br>
+Each lab assignment worths 3.3 points, as each person needs to submit 3 lab assignments and total weight of lab assignments is 10.
+<br>
+
+# Problem 3
+<br>
+A toenized URL is c.
+<br>
+
+# Problem 4
+List of questions:
+
+1.  How many lines does scarf have?
+
+2. What is the thing in the middle of piccture?
+
+3. What is the category of the data?
+
+# Problem 5
+```{r}
+library(readr)
+rows <- read_csv("https://data.urbanaillinois.us/api/views/6gtk-bwms/rows.csv?accessType=DOWNLOAD")
+print(rows)
+
+```
+
+# Problem 6
+
+
+```{r}
+
+raw2<- read_tsv("https://data.urbanaillinois.us/api/views/tsn9-95m3/rows.tsv?accessType=DOWNLOAD&bom=true")
+print(raw2)
+
+```
+
+# Problem 7 
+
+
+
+
+
+```{r }
+library(jsonlite)
+raw3<- fromJSON("https://raw.github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/master/data/data-leg?token=AAABJG56LGWR7IB4KBYBPO3BHABSK")
+print(raw3)
+names<-raw3$first
+surname<-raw3$last
+#View(raw3)
+print(names)
+
+
+```
+
+

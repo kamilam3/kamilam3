@@ -1,0 +1,203 @@
+---
+title: "STAT 440 Statistical Data Management - Fall 2021"
+output: html_document
+---
+
+## Homework02
+### Due: Monday September 27, 2021 11:59 pm US Central Time
+#### Created by Course Staff
+
+Grading Rubric (per question):  
+2 points if complete and correct  
+1 point if incomplete or incorrect  
+0 points if no attempt made  
+
+
+**Retrieving your work**
+
+This and all future homework .md files are written in Markdown. The .md file is rendered as an .html file for easier viewing. This and all future homework assignments are located in the **homework** directory within the **stat440-fa21-course-content** repo, i.e. **stat440-fa21-course-content/homework** in GHE. It is always recommended that you **pull** (or refresh) the **stat440-fa21-course-content** repo to ensure that you have the most updated version of all course content including the homework assignments. After pulling (or refreshing) the **stat440-fa21-course-content** repo, the homework file will be in the homework directory. Once you have accessed the .md file, copy all text from the .md file and paste all text into your reproducible document file (either .Rmd or .ipynb file). 
+
+**Submitting your work**
+
+In your individual student repo (named as your netID), you are to submit ***two*** files:
+
+a. Your reproducible document file (either .Rmd or .ipynb file) which should be saved as homework##-netID.Rmd or homework##-netID.ipynb depending on your preferred software. For example, my homework 01 file would be saved as homework01-kinson2.Rmd.
+
+b. Your rendered reproducible document file (.html) which should be saved as homework##-netID.html. For example, my homework 01 file would be saved as homework01-kinson2.html.
+
+**Do not place your files in a sub-directory (or folder).** You have an unlimited number of submissions, but only the latest proper submission (commit and push) will be viewed and graded. You are allowed to only use one software language per homework file. This means that you cannot mix software languages (R and Python) in one single homework file. **Remember the .Rmd (or .ipynb) file needs to render properly to .html before submitting.** 
+
+
+***
+
+Undergraduates are expected to complete the problems **#1-#8**. Graduate students are expected to complete all problems.
+
+**The following problems should be completed by you as an individual. If any problem asks you a particular question, be sure to answer it completely (with code, written sentences, or both). Written sentences should not appear in code chunks or code cells. Written sentences should appear in Markdown syntax unless specifically stated otherwise.**
+
+***Do not change anything in this file above the double line. Doing so will prevent your homework from being graded.***
+
+***
+***
+
+### Use only one programming language for this entire homework assignment. Use the URLs to access the data (if any). No local files allowed.
+
+**#1** (Markdown) Using Markdown syntax, make a numbered list with your first name in normal text as the first item, your last name in bold text as the second item, and the country name of your current location as the third item.
+
+1. Kamila
+
+2. **Makhambetova**
+
+3. USA
+
+
+**#2** (Personal survey, Markdown) Think about the previous two weeks (your experiences, assignments, life). Using Markdown, describe in paragraph form (with at least 3 complete sentences) what was the most challenging part(s) about homework01, the most challenging part(s) about those weeks, and the thing(s) that made your weeks successful or unsuccessful.
+<br>
+<br>
+In homework01 problem 10 I did not understand what I expected to do, but I could overcome this problem by attending office hours and getting clarifications of this exercise requirements from TA. Also, the most challenging part was the last lab assignment on week 5, where the professor asked to create new table by filtering, selecting and reorganizing some columns such that they satisfy the certain conditions. I learned how to apply all functions such as filter(), select(), arrange() together to create a new table. In general, my past weeks were successful as I successfully completed web-scrapping, reorganizing table tasks.
+
+**#3** (Structures of data, delimiters, and file extensions, Markdown) If a data file is given the .csv file extension, then the data file must be comma-separated. True or False? Write your answer in bold text. 
+<br>
+**True**
+<br>
+<br>
+
+**#4** (Prior knowledge, Markdown) Consider the information in the image below and the image itself as a data set. Make 2 separate Markdown lists: one list contains 3 things you know to be true about the data set, and the other list contains 3 questions about the data set (i.e. things you want to know about the data). 
+
+![pic03](https://uofi.box.com/shared/static/mgdjn8gtbhhyhs6502yrnu2wzhgh6yti.png)
+<br>
+<br>
+3 things I know to be true about the data set:
+
+1. It is a graph that shows amount of daily new cases per month for 7 different groups: Other, Fac/Staff, Grad, Undergrad, Univ. Community,Positivity %, Positivity % (7 day avg).
+
+2. The observations were collected from summer 2020 till summer 2021.
+
+3. For some intervals of date several lines from 7 lines (Other, Fac/Staff, Grad, Undergrad, Univ. Community, Positivity %, Positivity % (7 day avg)) are missing.
+
+<br>
+<br>
+
+3 questions about the data set:
+
+1. What is the meaning of the y-axis (Daily new cases)? Is it daily new cases of Covid-19?
+
+2. How were the observations on which this graph is built collected?
+
+3. Why there are no Other, Fac/Staff, Grad, Undergrad, Univ. Community, Positivity %, Positivity % lines from May 2021 till July 2021 on the graph?
+<br>
+<br>
+
+**#5** (Prior knowledge, Markdown) Considering the image in **Problem 4** and using Markdown, create a Markdown table that shows how you would organize the data information into tabular form with at least 12 rows and at least 2 columns with column names. *Your table should have a header row that contains the column names and there should be 12 rows (excluding header) and 2 columns.* 
+
+    #                      Month, year       Positivity % (approximately)
+------------------ ----------------------- --------------------------------
+    1                      August 2020           0.5    
+    2                      September 2020        2.8
+    3                      October 2020          0.4
+    4                      November 2020         0.25
+    5                      December 2020         0.75
+    6                      January 2021          0.5
+    7                      February 2021         0.5
+    8                      March 2021            0.15
+    9                      April 2021            0.17
+    10                     May 2021              0.19
+    11                     June 2021             0
+    12                     July 2021             0.03
+  
+  
+
+
+**#6** (Accessing and importing data) Import the members of the current US Congress Data using one programming language software and the data URL https://theunitedstates.io/congress-legislators/legislators-current.json. Now, print the structure of the data. **This structure should match the data description below.** 
+
+  - The dataset (a .json file) contains the 538 members of the US Congress with 6 variables ("columns") per person which includes details about the legislators' first and last names, middle name, nickname, and suffixes. According to the GovTrack, "the United States Congress has two chambers, one called the Senate and the other called the House of Representatives (or "House" for short) which share the responsibilities of the legislative process to create federal statutory law." The original source is TheUnitedStates.io and GovTrack. **If you have difficulty accessing the file from the original source, please use this [legislators](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/legislators-data.json) file instead. If you are using Python, please use this [legislators-python](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/legislators-python-data.json) file instead.**
+
+```{r}
+library(jsonlite)
+USCongress<- fromJSON("https://theunitedstates.io/congress-legislators/legislators-current.json")
+str(USCongress$name)
+
+```
+
+
+
+**#7** (Web scraping for accessing and importing data, Accessing and importing data) Web scrape the Champaign County Assessor's [website](https://champaignil.devnetwedge.com/) to extract a property's Total Tax in US Dollars. Do this for the first 10 properties in the City of Urbana's [Rental Inspection Grades Listings Data01](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/rental-inspections-grades-data01.csv) and print the resulting 10 rows. **If you have difficulty accessing the information for scraping, please skip this problem. Keep in mind that only students outside of the US may have internet restrictions that prevent them from accessing the information from the original source.**
+
+```{r}
+rental<-read.csv("https://raw.github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/master/data/rental-inspections-grades-data01.csv?token=AAAC53DEZ4L74I3UGM6R2OLBLDIUC")
+```
+
+```{r webscrapingloop}
+library(rvest)
+prop_url <- paste0("https://champaignil.devnetwedge.com/parcel/view/",rental$Parcel.Number,"/2020")  ### aray of url where rental_data$`Parcel Number` changes.
+
+property_total_tax <- rep(0, length(prop_url))
+
+print("Property total tax")
+for (i in 1:10){ #running only the first 10 parcels
+  property_total_tax [i] <- html_text(html_nodes(read_html(prop_url[i]),".inner-value:nth-child(3)"),trim=TRUE)
+  print(property_total_tax [i])
+}
+
+```
+
+
+**#8** (Handling dates and times, Arranging data) Using the City of Urbana's [Rental Inspection Grades Listings Data02](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/rental-inspections-grades-data02.txt) - **this file is different from above**, ensure that the Inspection Date and Expiration Date columns are formatted as dates or datetimes; not character format. Now, arrange by the Inspection Date column in order of newest to oldest and print the first 10 rows of the resulting data.
+```{r}
+library(tidyverse)
+rental2<-read_csv("https://raw.github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/master/data/rental-inspections-grades-data02.txt?token=AAAC53DUJNLSJGC7KDAHRDDBLDI7S",show_col_types = FALSE)
+# check initial type of Inspection and Expiration dates
+rental_dates<-rental2[,c(3,6)] 
+str(rental_dates)
+
+#transform type of Inspection and Expiration dates into date type
+
+rental_dates$InspectionDate2<-as.Date(rental_dates$`Inspection Date`, format = "%m/%d/%y")
+
+rental_dates$ExpirationDate2<-as.Date(rental_dates$`Expiration Date`, format = "%m/%d/%y")
+
+str(rental_dates)
+```
+
+```{r}
+#Arrange by the Inspection Date column in order of newest to oldest and print the first 10 rows of the resulting data.
+
+library(tidyverse)
+
+rental2$Inspection.Date_2<-rental_dates$InspectionDate2
+rental2$Expiration.Date_2<-rental_dates$ExpirationDate2
+
+arrange_rental2<-rental2 %>% 
+                 select(-c(`Inspection Date`,`Expiration Date`))%>%
+                 arrange(desc(Inspection.Date_2))
+
+head(arrange_rental2,10)
+
+
+
+```
+
+
+**#9** (Accessing and importing data, Arranging data) Using the City of Urbana's [Rental Inspection Grades Listings Data02](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/rental-inspections-grades-data02.txt), organize the columns such that the first column of the data comes first in the alphabet, second column comes next in the alphabet, so on. Additionally, sort the Grade column so that the rows are in alphabetical order. Now, print the first 10 rows of the resulting data. **The Inspection Date and Expiration Date columns are assumed to be character format; they do not have to be date or datetime format in this problem.**
+
+```{r}
+rental_inspection2<-read_csv("https://raw.github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/master/data/rental-inspections-grades-data02.txt?token=AAAC53E6ULUB6SW273RPI43BLDROU", ,show_col_types = FALSE)
+
+##organize the columns such that the first column of the data comes first in the alphabet, second column comes next in the alphabet, so on
+rental_col_alphabet<-rental_inspection2[,order(names(rental_inspection2))]
+
+##sort by grades
+rental_col_alphabet%>% 
+  arrange(Grade)%>% 
+  head(.,10)
+
+
+  
+
+```
+
+
+**#10** (Prior knowledge, Markdown, Structures of data, delimiters, and file extensions, Accessing and importing data) Is the data file in **Problem 9** organized such that it matches its file extension? **Your answer for this problem should be in Markdown syntax.**
+<br>
+<br>
+No, all columns are comma separated, that's why it is organized as .cvs file. We use read.cvs() to read this file despite the file format is .txt. 
+

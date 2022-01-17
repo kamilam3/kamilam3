@@ -1,0 +1,113 @@
+# STAT 440 Statistical Data Management - Fall 2021
+## Week12 Lab03 Mon
+### Only the driver should submit this assignment into their individual student repo. Save the filename as lab03-week12-mon-netID.Rmd (or .ipynb for Python users). Then render this file to .html when completed. 
+#### Both .Rmd/.ipynb and .html files must be submitted by 11:00 am. Any lab submitted after 11:00 am will be deducted 1 point for being late.
+
+**#1** Using Markdown syntax, make a non-numbered list with the first and last names of everyone at your station. Your name should appear in italic and bold text.
+
+- ***Kamila Makhambetova***
+- Zhen Zhou
+- Anisha Sharma 
+- Chenyan Rong
+
+**#2** statement: In SQL, we can convert all strings to be uppercase using the function **toupper**.
+
+If the text in bold is the term that makes the statement true, then write TRUE below in all caps. If the text in bold is the term that makes the statement false, then write FALSE below in all caps and write the correct term in bold text in a new line under FALSE.
+<br>
+FALSE
+<br>
+**UPPER() **
+
+**#3** **Import the following datasets using a programming language and their corresponding data URLs (no SQL required for importing). After importing, combine these datasets into a single dataset and print the first 5 rows of the resulting data using SQL.** Read the data descriptions to help verify the import was successful.
+
+- Chicago Food Inspections Data Part 1 and its GHE data URL https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/chicago-food-inspections-data02.csv or Box data URL https://uofi.box.com/shared/static/k6h51rdj07jmmiv11q3vmehgr2200eua.csv
+
+- Chicago Food Inspections Data Part 2 and its GHE data URL https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/chicago-food-inspections-data03.csv or Box data URL https://uofi.box.com/shared/static/zyn1kls0xxpjl3ld0m9w6cl2s3343gov.csv
+
+- These datasets (both .csv files) contains 9375 observations each with 8 and 9 columns, respectively. There should be a total of 16 unique columns. The observations are places that serve food including grocery stores, butchers, bakeries, restaurants, school cafeterias, gas stations, and delis throughout the city limits of Chicago. These establishments pass, fail, or have certain conditions associated with passing the inspection. Read the two links - [link01](https://data.cityofchicago.org/api/assets/BAD5301B-681A-4202-9D25-51B2CAE672FF) and [link02](http://dev.cityofchicago.org/open%20data/data%20portal/2018/06/29/food-violations-changes.html) for more details about the data values. The original source is the City of Chicago Data Portal. **If you have difficulty accessing the two Chicago Food Inspections links from the original sources, please use these  [alt-link01](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/chicago-food-data-key01.pdf) and [alt-link02](https://github-dev.cs.illinois.edu/stat440-fa21/stat440-fa21-course-content/raw/master/data/chicago-food-data-key02.pdf) links instead.**
+
+
+```{r}
+
+library(tidyverse)
+library(readr)
+library(sqldf)
+food1<-read_csv("https://uofi.box.com/shared/static/k6h51rdj07jmmiv11q3vmehgr2200eua.csv")
+food2<- read_delim("https://uofi.box.com/shared/static/zyn1kls0xxpjl3ld0m9w6cl2s3343gov.csv", 
+    delim = "\t", escape_double = FALSE, 
+    trim_ws = TRUE)
+
+
+sqldf("SELECT food1.`Inspection ID`, `DBA Name`, `AKA Name`, `License #`, `Facility Type`, `Risk` , Address, City, State, Zip, `Inspection Date`, `Inspection Type`, Results, Violations, Latitude, Longitude
+       FROM food1 INNER JOIN food2 ON food2.`Inspection ID` = food1.`Inspection Id`
+         LIMIT 5
+      ")
+    
+
+
+```
+
+
+
+**#4** Using SQL, the data in **Problem 3**, the data description and details in the links in **Problem 3**, and a programming language, create a new data object named `inspections` that does the following in this order:  
+
+1. filters inspection dates to after March 01, 2011
+
+2. mutates a new column called "pass_or_not" which equals 1 if the restaurant passes the inspection, 0 if the restaurant passes with conditions, 0 if the restaurant fails, and NA otherwise
+
+3. drops all missing values among the remaining columns (e.g. if one field is missing a value for a single row, then that row must be removed)
+
+4. arrange the data by Inspection ID in increasing order
+
+Now, print the first 5 observations and the last 5 observations of the `inspections` data set. **The first five and last five observations must keep the arranged order based on step 4 above.**
+```{r}
+
+food3<-sqldf("SELECT food1.`Inspection ID`, `DBA Name`, `AKA Name`, `License #`, `Facility Type`, `Risk` , Address, City, State, Zip, `Inspection Date`, `Inspection Type`, Results, Violations, Latitude, Longitude
+       FROM food1 INNER JOIN food2 ON food2.`Inspection ID` = food1.`Inspection Id`
+      ")
+
+
+inspection<-sqldf("SELECT `Inspection ID`, `DBA Name`, `AKA Name`, `License #`, `Facility Type`, `Risk` , Address, City, State, Zip, `Inspection Date`, `Inspection Type`, Results, Violations, Latitude, Longitude,
+       
+      CASE
+       WHEN Results='PASS' THEN 1
+       WHEN Results = 'Pass w/ Conditions' THEN 0
+       WHEN Results = 'Fail' THEN 0
+       ELSE NULL
+       END AS pass_or_not
+       FROM food3
+       WHERE `Inspection ID` IS NOT NULL AND `DBA Name`  IS NOT NULL AND `AKA Name`  IS NOT NULL AND `License #`  IS NOT NULL AND `Facility Type`  IS NOT NULL AND `Risk`  IS NOT NULL AND Address  IS NOT NULL AND City  IS NOT NULL AND State  IS NOT NULL AND Zip  IS NOT NULL AND `Inspection Date`  IS NOT NULL AND `Inspection Type`  IS NOT NULL AND Results  IS NOT NULL AND Violations  IS NOT NULL AND Latitude  IS NOT NULL AND Longitude  IS NOT NULL AND `Inspection Date` > '2011-03-01'
+       ORDER BY `Inspection ID`
+      ")
+sqldf("SELECT * FROM inspection
+      LIMIT 5")
+
+
+```
+
+
+
+**#5** Use SQL, the data in **Problem 3** and a programming language applying data management concepts to answer the following question in Markdown syntax and complete sentence(s): 
+
+- Among the businesses that failed their inspections, what was the third most common facility type? 
+
+**You must answer in Markdown syntax in a complete sentence and show code as evidence of your answer. You must use SQL to complete this problem.**
+<br>
+<br>
+**Answer**
+<br>
+School is 3rd most common facility among the businesses that failed their inspectetions.
+
+
+
+```{r}
+
+sqldf("SELECT `Facility Type`, COUNT(`Facility Type`) as count
+      FROM food3
+      WHERE Results=='Fail'
+      GROUP BY `Facility Type`
+      ORDER  BY  count DESC")
+
+```
+food3$`Facility Type`
+
