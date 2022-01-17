@@ -1,0 +1,1074 @@
+---
+title: "Project 2"
+output:
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+Author: Kamila Makhambetova
+
+# <span style="color:purple">*Introduction*</span>
+
+
+### Research Questions: 
+>  What factors among region, GDP per capita, social support, healthy life expectancy, freedom to make life choices,
+generosity, perceptions of corruption, ladder score in dystopia affect the ladder score (happiness score) a lot in 2021?
+Is the estimated regression model between the  the ladder score (happiness score) and stated above 8  factors appropriate for the application? How does it look?
+
+### Research Interest
+> 2020 and 2021 are the hardest years for humankind in 21 century. Because of Covid 19, we face many restrictions. It is clear, people became unhappier. That's why I decided to investigate the happiness score and factors that affect it in 2021. I chose 53 different countries from the different parts of Earth and with different happiness scores to make my data wide-spreading and unbiased.
+
+### Data
+
+>Data was taken from World Happiness Report 2021: https://databank.worldbank.org . The World Happiness Report is a publication of the Sustainable Development Solutions Network, powered by data from the Gallup World Poll and Lloyd’s Register Foundation, which provided access to the World Risk Poll. The 2021 Report includes data from the ICL-YouGov Behaviour Tracker as part of the COVID Data Hub from the Institute of Global Health Innovation. The World Happiness Report was written by a group of independent experts acting in their personal capacities.
+<br>
+All 9 variables were taken from World Happiness Report 2021:
+<br>
+1) Happiness score or subjective well-being (variable name ladder ) was taken from the Feb 26, 2021 release of the Gallup World Poll (GWP) covering years from 2005 to 2020. <br>
+2) GDP per capita was taken from the October 14, 2020 update of the World Development Indicators (WDI).<br>
+3) Healthy Life Expectancy (HLE) at birth is based on the data extracted from the World Health Organization’s (WHO) Global Health Observatory data repository (Last updated: 2020-09-28).<br>
+4) Social support, freedom to make life choices, generosity, corruption perception are the national average of the binary responses (either 0 or 1) to the GWP questions.<br>
+5) Ladder score in dystopia was calculated by creators of World Happiness Report 2021.
+<br>
+
+
+#### Definitions
+
+ <font size="4"> **Happiness score (ladder score)** is the national average response to the question of life evaluations. The experts ask the residents to assess own life in this country using scaling from 0 (the worst possible life) to 10 (the best possible life). <br>
+
+**GDP per capita (PPP based)** is gross domestic product converted to international dollars using purchasing power parity rates and divided by total population. <br>
+**Healthy Life Expectancy** is the average number of years that a person can expect to live in "full health" by taking into account years lived in less than full health due to disease and/or injury. <br>
+**Social support** is the national average of the binary responses (either 0 or 1) to the GWP question “If you
+were in trouble, do you have relatives or friends you can count on to help you whenever you need them, or not?” <br>
+**Freedom to make life choices** is the national average of responses to the GWP question “Are you satisfied or dissatisfied with your freedom to choose what you do with your life?” <br>
+**Generosity** is the residual of regressing the national average of response to the GWP question “Have you donated money to a charity in the past month?” on GDP per capita.<br>
+**Corruption Perception** is the national average of the survey responses to two questions in the GWP: “Is corruption widespread throughout the government or not?” and “Is corruption widespread within businesses or not?” The overall perception is just the average of the two 0-or-1 responses.<br>
+**Ladder score in dystopia** is the lowest national average for each key variable and is, along with the residual error, used as a regression benchmark. 
+<br>
+<br>
+**Response variable (Y)**: Happiness score (ladder score) in range [0,10] <br>
+**Explanatory variables ($x_i$)**: GDP per capita (PPP based), region, Healthy life expectancy, social support, freedom to make life choices, Generosity, Corruption Perception, Ladder score in dystopia. 
+</font>
+
+### Hypothesis and Explanation (about the correlation)
+
+#### Hypothesis:
+> Happiness score and each explanatory variable such as GDP per capita (PPP based), Healthy Life Expectancy, Social support, Freedom to make life choices, Generosity, have a positive relationship. As the rise in one of these factors causes a rise in the happiness score. Happiness score and Corruption Perception have an inverse relationship. 
+As the rise in corruption perception causes a fall in the happiness score. Countries that are placed in the Western Europe region have a high happiness score, but countries that are placed in Sub-Saharan Africa have a low happiness score.
+
+#### Explanation of hypothesis
+
+> An increase in GDP per capita means the increase in country's production of goods and services. So it leads to economic growth, the quality of life in this country rises. So people became happier. An increase in social support means an increase in number of people, who have relatives or friends they can count on in the trouble. An increase in Freedom to make life choices leads to a rise in amount of satisfied people, who can participate in own life without any restrictions, forced by government, religion or society. An increase in generosity means more people participate in charity. Maybe they started to earn more money, so they have extra money to donate. An increase in healthy life expectance may represent the efficient contribution of government in the health care system, i.e. government spends a significant part of budget on the development of health care system. So the quality of life in this country increases. An increase in all these factors leads to an increase in quality of life, so the happiness score rises.<br>
+An increase in Corruption Perception means more residents think that corruption is widespread throughout the government and the business. So they lost trust in the government, juridical system, governmental structures. The quality of life decreases, which leads to falling in happiness score. <br>
+Most Western European countries are developed countries, so their economics is strong, they have low corruption, a high level of democracy, developed infrastructure, and a health care system. So the quality of life is significantly high there. So countries that are placed in Western Europe region have high happiness score
+Most Sub-Saharan Africa countries are developing countries, so their economics is weak, they have high corruption, low level of democracy, weak infrastructure, and health care system. So the quality of life is significantly low there. Countries that are placed in Sub-Saharan Africa have low happiness scores.
+
+#### Note
+ > It is difficult to judge the appropriateness of this regression model by just looking at the data table and without drawing proper graphs and conducting proper tests. So all conclusions about the linearity of Y, homogeneity of variance of residuals, independence of residuals, normality of residuals will be made in the 'Data Analysis' section.
+
+### Method
+
+<font size="4"> 1. Linear modeling: happiness score vs region, GDP per capita, social support, healthy life expectancy, freedom to make life choices, generosity, perceptions of corruption, ladder score in dystopia  <br> 
+2. Multicollinearity:Scatterplot Matrix and the correlation Matrix, VIF <br>
+3. Model Selection: F-test, Added Variable plots, Stepwise regression, Model selection criterion : Adjusted $R^2$, AIC, BIC, $C_p$. <br>
+4. Residual analysis: <br>
+4.1) Independence of residuals: Sequence plot $e_i$ vs $i$ and Test for Independence <br>
+4.2) Normal distribution of residuals: QQ Plot, Shapiro-Wilk Test for Normality <br>
+4.3) Homogenity of Variance and linearity of  $\hat{Y}_{i}$: Residuals $e_i$ vs Fitted values $\hat{Y}_{i}$, Levene’s Test for Homogeneity of Variance <br>
+4.4) Ouliers: Studentized deleted residuals, leverages, DFFIT,Cook’s distance.<br>
+4.4) Multicollinearity: VIF <br>
+4.5) Added variable plots <br>
+5. Remedial measures and diagnostics/ residual analysis of new model.</font><br>
+
+# <span style="color:purple">*Data Analysis*</span>
+
+## <span style="color:red">*1) Linear Modeling*</span>
+
+### Table on which my project is based
+
+```{r My_Data, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages('plyr', repos = "http://cran.us.r-project.org")
+#install.packages('XQuartz', repos = "https://www.xquartz.org/")
+#install.packages("readxl")
+library("readxl")
+library("plyr")
+#library("XQuartz")
+#install.packages("xlsx")
+#library(xlsx)
+
+My_Data <- read_excel("Data2.xlsx",sheet=1,range="B2:K52", col_names = TRUE)
+
+hapscore<-My_Data$`Ladder score`
+Gdp<-My_Data$`GDP per capita`
+socsup<-My_Data$`Social support`
+lifeexp<-My_Data$`Healthy life expectancy`
+freed<-My_Data$`Freedom to make life choices`
+generos<-My_Data$`Generosity`
+corrupt<-My_Data$`Perceptions of corruption`
+dystopia<-My_Data$`Ladder score in Dystopia +residual`
+region<-My_Data$`Regional indicator`
+
+
+My_Data
+
+```
+```{r}
+my_model=lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+corrupt+dystopia+region, data=My_Data)
+summary(my_model)
+
+```
+#### Comment:
+>By t-value test we reject $H_0$: $B_{i}$=0 for intercept, GDP, social support, life expectancy, freedom to make life choices,generosity, perceptions of corruption and happiness score in dystopia. As p-val= $2$x$10^{-16}$ and p-val<0.05. For categorical variable, region, only East Asia category is significant at $\alpha$=0.05 as p-val=0.0266 < 0.05 so we reject H0: $B_{9}$=0.<br>
+By F-test which tests if all $B_{i}$=0 or not, we can reject $H_0$: $B_{1}=B_{2}=...=B_{14}=0$ as p-val=$2$x$10^{-16}$ < $\alpha$=0.05. So there is at least one nonzero predictor. So F-test for full model and t-test for each predictor in the presence of other predictors came to the same conclusion that there are nonzero $B$'s. So I assume there is no strong multicollinearity between predictors.  <br>
+So $\hat{Y}_{i} = -4.42+0.33*X_{i,1}+ 2.43*X_{i,2}+0.029*{X}_{i,3} +1.304*{X}_{i,4}+0.598*{X}_{i,5}-0.626058*{X}_{i,6}+ 0.981058*{X}_{i,7}-0.0339*{X}_{i,8}$ where $X_{i,7}$= 0 for counties that are not placed in East Asia  and $X_{i,7}$= 1 for the countries that are placed in East Asia region.
+
+## <span style="color:red">*2) Multicollinearity*</span>
+
+### Scatterplot Matrix and the correlation Matrix 
+
+<font size="4"> To analyze multicollinearity between predictor variables I decided to draw scatterplot matrix and construct the correlation matrix.</font> <br>
+
+
+```{r scatterplot,fig.width=8, fig.height=6}
+
+My_Data2 <- read_excel("Data2.xlsx",sheet=1,range="D2:K52", col_names = TRUE)
+pairs(My_Data2 , lower.panel = NULL)
+cor(My_Data2 )
+```
+
+#### Comment:
+>By Scatter plot Matrix we can see that Y (happiness score) has a strong linear relationship with each predictor variable, except  Generosity and Ladder score in Dystopia, as the data distributed in narrow band, which has a linear shape and the correlation coefficient between Y and stated above predictor variables 0.602<|r|<0.762 (from the correlation Matrix). There is a medium positive relationship between Y (happiness score) and Generosity on the Scatter plot Matrix, as the points are distributed in wide band and r=0.42526621 (from the correlation Matrix). 
+There is medium positive relationship between Y (happiness score) and  Ladder score in Dystopia on the Scatter plot Matrix, but the correlation Matrix shows that r= 0.19561365, which is a small correlation. <br>
+The Ladder score in Dystopia with the other predictor variables has weak correlation as 0.038<|r|<0.39. It has a little collinearity with other predictors. <br>
+GDP has a strong positive linear relationship with social support (from  Scatter plot Matrix) and 
+r=0.691. Also, GDP has a strong positive linear relationship with healthy life expectancy (from  Scatter plot Matrix), and r=0.7804. So GDP has a strong collinearity with social support and healthy life expectancy.<br>
+Social support has a strong positive linear relationship with helathy life expectancy as r=0.69944. So they are
+strongly collinear. 
+
+### Note
+> I will not drop any predictor variable as the scatterplot shows the marginal relationship between Y and
+each predictor, but it does not give me any information about the joint relationship between Y (happiness score) and 8 predictor variables. Despite r= 0.19561365, which is a small correlation between Y and Ladder score in Dystopia, I will not drop Ladder score in Dystopia predictor. As seeing week marginal relationship between Y and Ladder score in Dystopia predictor does not mean that this predictor is not needed in a model including other predictors. Further tests are required.
+
+### F- test
+<br>
+<font size="4"><p> Want to test whether we can drop q variables from a model that has p = k + 1 (including the intercept), p is number of $\beta$'s, q < p. <br>
+$H_0:\; B_{j,1}=B_{j,2}...=B_{j,q}=0$ in the full model<br>
+If $H_0$ is true then p-value for the test is Pr($F^*\; >F_{q,n-p}$)  <br>
+Use R to calculate p-value <br> </p>
+<br>
+I want to test Ladder score in Dystopia is necessary or not in the presence of other predictors. As 
+from the Correlation Matrix there is a weak positive relationship between Y (happiness score) and  Ladder score in Dystopia as r= 0.19561365, which is a small correlation. <br>
+$H_0:\; \beta_7=0$ in the full model<br>
+
+</font>
+
+<span style="color:red"> <font size="4">*NOTE: For all tests I will use 95% CI* </font></span>
+```{r}
+my_model=lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+corrupt+dystopia+region, data=My_Data)
+model_reduced= update(my_model, . ~ . - dystopia)
+anova(my_model, model_reduced)
+
+```
+
+#### Comment:
+> Reject $H_0$: $B_7$=0 as p-value= $2$*$10^{-16}$ < $\alpha$=0.05. So Ladder score in Dystopia is necessary in the presence of other predictors. 
+
+### Variance inflation factor (VIF)
+
+<font size="4">
+The predictor $x_j$ has: <br>
+$VIF_j=\frac{1}{1-R^{2}_j}$
+<br>
+where $R^{2}_j$ is the $R^2$ from regressing $x_j$ on the remaining predictors.
+<br>
+If $VIF_j \approx 1$ then $x_j$ is not involved in any multicollinearity. <br>
+If $VIF_j >10$ then $x_j$ is involved in severe multicollinearity.
+
+</font>
+
+
+
+```{r}
+library(car)
+vif(my_model)
+```
+#### Comment:
+> From computations of Variance inflation factor we can see that VIF-s for all predictor variables except region
+are less than 10. So GDP, social support, life expectancy, freedom to make life choices,generosity, perceptions of corruption and happiness score in dystopia are not involved in severe multicollinearity, but VIF of region= 78.2 > 10, region is involved in severe multicollinearity.
+
+#### Note
+> I decided to drop categorical variable ,region, as by t-test only East Asia region is significant.
+If country belongs to East Asia and other predictors are constant happiness score decreases by 0.033902 units.
+If country does not belong to East Asia  and other predictors are constant happiness score stays unchanged.
+In my opinion, happiness score decreases by 0.033902 units is very small change. Also, the region is involved in severe multicollinearity. So I can just ignore and drop it.
+
+
+## <span style="color:red">*3) Model selection*</span>
+### Added variable plots
+
+<font size="4">
+Added variable plots are refined plots to help figure out if the “non-linear” pattern is there when 
+other variables are added. <br>
+Gives an idea of the functional form of $x_j$: a transformation in $x_j$ should mimic the pattern seen in the plot.<br>
+</font>
+
+```{r}
+#par(mfrow=c(4,2))
+
+#Added var plot for x1
+fit11 = lm(hapscore~ socsup+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx1=fit11$residuals
+
+fit12 = lm(Gdp ~ socsup+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+rex1onwithoutx1=fit12$residuals
+plot(reYonithoutx1 ~ rex1onwithoutx1, main="Graph 1: Added-Variable Plot for x1 (GDP)", xlab="e(x1|others)", ylab="e(Y|Y on without x1) ")
+#scatter.smooth(x=rex1onwithoutx1, y=reYonithoutx1, main="Graph 1: Added-Variable Plot for x1 (GDP)",xlab="e(x1|others)", ylab="e(Y|others without x1)") 
+
+
+#Added var plot for x2
+fit21 = lm(hapscore~ Gdp+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx2=fit21$residuals
+
+fit22 = lm(socsup~ Gdp+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+rex2onwithoutx2=fit22$residuals
+plot(reYonithoutx2 ~ rex2onwithoutx2, main="Graph 2: Added-Variable Plot for x2 (social support)", xlab="e(x2|others)", ylab="e(Y|others without x2) ")
+
+#Added var plot for x3
+fit31 = lm(hapscore~ Gdp+socsup+freed+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx3=fit31$residuals
+
+fit32 = lm(lifeexp~ Gdp+socsup+freed+generos+corrupt+dystopia, data=My_Data)
+rex3onwithoutx3=fit32$residuals
+plot(reYonithoutx3 ~ rex3onwithoutx3, main="Graph 3: Added-Variable Plot for x3 (life expectancy)", xlab="e(x3|others)", ylab="e(Y|others without x3) ")
+
+#Added var plot for x4
+fit41 = lm(hapscore~ Gdp+socsup+lifeexp+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx4=fit41$residuals
+
+fit42 = lm(freed~ Gdp+socsup+lifeexp+generos+corrupt+dystopia, data=My_Data)
+rex4onwithoutx4=fit42$residuals
+plot(reYonithoutx4 ~ rex4onwithoutx4, main="Graph 4: Added-Variable Plot for x4 (freedom to make life choice)", xlab="e(x4|others)", ylab="e(Y|others without x4) ")
+
+#Added var plot for x5
+fit51 = lm(hapscore~ Gdp+socsup+lifeexp+freed+corrupt+dystopia, data=My_Data)
+reYonithoutx5=fit51$residuals
+
+fit52 = lm(generos~ Gdp+socsup+lifeexp+freed+corrupt+dystopia, data=My_Data)
+rex5onwithoutx5=fit52$residuals
+plot(reYonithoutx5 ~ rex5onwithoutx5, main="Graph 5: Added-Variable Plot for x5 (generosity)", xlab="e(x5|others)", ylab="e(Y|others without x5) ")
+
+#Added var plot for x6
+fit61 = lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+dystopia, data=My_Data)
+reYonithoutx6=fit61$residuals
+
+fit62 = lm(corrupt~ Gdp+socsup+lifeexp+freed+generos+dystopia, data=My_Data)
+rex6onwithoutx6=fit62$residuals
+plot(reYonithoutx6 ~ rex6onwithoutx6, main="Graph 6: Added-Variable Plot for x6 (Perceptions of corruption)", xlab="e(x6|others)", ylab="e(Y|others without x6) ")
+
+#Added var plot for x7
+fit71 = lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+corrupt, data=My_Data)
+reYonithoutx7=fit71$residuals
+
+fit72 = lm(dystopia~ Gdp+socsup+lifeexp+freed+generos+corrupt, data=My_Data)
+rex7onwithoutx7=fit72$residuals
+plot(reYonithoutx7 ~ rex7onwithoutx7, main="Graph 7: Added-Variable Plot for x7 (Ladder score in Dystopia)", xlab="e(x7|others)", ylab="e(Y|others without x7) ")
+
+
+
+
+
+```
+
+#### Comment:
+> By all 7 Added variable plots for each predictor variable we can see that there is a strong linear relationship between residuals($Y$| $x_{-j}$) and residuals($x_{j}$|$x_{-j}$). So every $x_j$ explains residual
+variability once the rest of the predictors are in the model. Also as it is a linear relationship, I do not need to do any transformation on any $x_j$. I think I do not need to add polynomial terms.
+
+### Automated variable search: Stepwise regression
+
+<font size="4">
+The Stepwise regression is based on 2 methods: Forward  selection when we add variables to the model and Backward elimination when we remove predictors from the model. <br>
+I added all possible predictors to model and choose $\alpha_s=0.15$ and $\alpha_e=0.1$.<br>
+There are 21 possible interactions terms, as 7C2=21 and 7 second order terms. <br>
+In total my model has 35 predictors
+
+</font>
+
+```{r}
+
+library(olsrr)
+My_Data <- read_excel("Data2.xlsx",sheet=1,range="B2:K52", col_names = TRUE)
+My_Data$GDP2=My_Data$`GDP per capita`^2
+My_Data$socsup2=My_Data$`Social support`^2
+My_Data$lifeexp2=My_Data$`Healthy life expectancy`^2
+My_Data$freed2=My_Data$`Freedom to make life choices`^2
+My_Data$generos2=My_Data$Generosity^2
+My_Data$corrupt2=My_Data$`Perceptions of corruption`^2
+My_Data$dystopia2=My_Data$`Ladder score in Dystopia +residual`^2
+
+m2 = update(my_model, . ~ . + GDP2 + socsup2+lifeexp2+freed2+generos2+corrupt2+dystopia2)
+m3 = update(m2,. ~ . + Gdp*socsup+Gdp*lifeexp+Gdp*freed+Gdp*generos+Gdp*corrupt+Gdp*dystopia)
+m4 = update(m3,. ~ . + socsup*lifeexp+socsup*freed+socsup*generos+socsup*corrupt+socsup*dystopia)
+m5 = update(m4,. ~ . + lifeexp*freed+lifeexp*generos+lifeexp*corrupt+lifeexp*dystopia)
+m6 = update(m5,. ~ . + freed*generos+freed*corrupt+freed*dystopia)
+m7 = update(m6,. ~ . + generos*corrupt+generos*dystopia+corrupt*dystopia)
+ols_step_both_p(m7, pent = 0.1, prem = 0.15)
+
+```
+
+#### Comment:
+> I added all possible 21 interaction terms (7C2) and 7 possible quadratic terms. So in total I had 35 predictors in my model.<br>
+By stepwise selection the final model has 10 predictor variables: <br>
+1) 4 1st order variables: Generosity, Corruption, Freedom to make life choices, GDP.  3 1st order predictor variables such as Social support, Healthy life expectancy, Ladder score in Dystopia were deleted. <br>
+2) 3 2nd order terms: $Ladder\; score\; in\; Dystopia^2$, $Life\; expectancy^2$, $GDP^2$.<br>
+3) 3 interaction terms: $social\;support\times Ladder\; score\; in\; Dystopia$, $social\; support\times corruption$,
+$freedom\times corruption$.
+<br> I decided to leave all these predictor variables and add 3 1st order removed predictor variables such as Social support, Healthy life expectancy, Ladder score in Dystopia, as by added variable plots these predictors explain residual variability once the rest of the predictors are in the model. 
+
+### Model selection criterion : Adjusted $R^2$, AIC, BIC, $C_p$
+<font size="4">
+**1) Adjusted $R^2$**
+<br>
+The adjusted $R^2$ provides a measure of how good the model will predict data not used to build the model.
+<br>
+When irrelevant variables are added, adjusted $R^2$ decreases.
+<br> The bigger $R^2$, the better model is.
+<br>
+<br>
+**2) Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) **
+<br>
+ AIC favors models with small SSE, but penalizes models with too many variables p.
+<br> The lower AIC, the better model is.
+<br> BIC is similar to AIC, but penalty term is more severe.
+<br> The lower BIC, the better model is.
+<br>
+<br>
+**3) Mallow’s $C_p$**
+$C_p$ assesses the biasness of model and fit of data. <br>
+If $C_p$ ≈ p, then the reduced model predicts as well as the full model. <br>
+If $C_p$ < p then the reduced model is estimated to be less biased than the full model<br>
+The lower $C_p$ , the better model is.
+
+</font>
+
+```{r}
+#m12 = update(my_model, . ~ . -region+ GDP2 + lifeexp2+dystopia2)
+#m13= update(m12, . ~ . +socsup*dystopia +socsup*corrupt+ freed*corrupt)
+
+library(leaps)
+
+allhapscore <- regsubsets( hapscore~ Gdp+socsup+lifeexp+freed+generos+corrupt+dystopia+GDP2 + lifeexp2+dystopia2+socsup*dystopia +socsup*corrupt+ freed*corrupt, nbest=4, data=My_Data)
+
+all_output <- summary(allhapscore)
+with(all_output, round(cbind(which, rsq, adjr2, cp, bic), 3))
+
+
+```
+
+#### Comment:
+> By selection model criterion the best model has the lowest BIC=-327.367, lowest $C_p$= 4.992 and the highest adjusted $R^2$= 0.999. This model has 7 predictor variables such as GDP, Social support, Healthy life expectancy,
+Freedom to make life choices, Generosity, Ladder score in Dystopia and one interaction term freedom*corruption.
+
+#### Note:
+> By looking at selection model criterion, constructing different plots and applying Stepwise Selection method I 
+decided to use linear model Y (happiness score) and 8 predictor variables: GDP, Social support,
+Healthy life expectancy, Freedom to make life choices, Generosity, Perceptions of corruption,Ladder score in Dystopia, freedom*corruption.
+
+
+
+## <span style="color:red">*4) Residual analysis* </span>
+
+<font size="4"> 
+Usually, we do not make any diagnostic of the response variable Y because Y=f($x_1$,$x_2$,..,$x_k$), where $x_i$ is a the predictor variable for i=1,2,...,k. So usually diagnostics of Y are carried out indirectly through residual analysis, as $e_i=Y_i-\hat Y_i$.
+<br>
+We need to learn basic assumptions on which simple linear regression theory is built. 
+<br>
+<br>
+<p>**Assumptions of MLR** </p>
+<p>$\epsilon_1,\epsilon_2....\epsilon_n \backsim^{iid} N(0,\sigma^2)$  <br>
+A linear relationship between E[Y] and associated predictors $x_1$, . . . , $x_k$ . <br>
+<br>
+If the model is appropriate for the given data, the residuals $e_i$ should reflect the assumed properties for the error terms $\epsilon_i$.
+
+After the model fit and before any conclusions are made we need to check:  <br>
+1. Normality of residuals <br>
+2. Homogeneity of variance of residuals  <br>
+3. Linearity of Y  <br>
+4. Independence of residuals<br>
+5. The predictor variables are not too highly correlated with each other.<br>
+6. There are no influential outliers<br> </p>
+</font>
+
+## <span style="color:green">*4.1) Checking independence of residuals*</span>
+### a) Sequence plot $e_i$ vs $i$
+<font size="4"> The plotting $e_i \; against\; i$ i.e residuals vs its index allows to determine if there is any correlation between error terms, such we can check the independence of residuals.</font>
+
+```{r}
+library(lawstat)
+library(latex2exp)
+
+my_model_fin=lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+corrupt+dystopia+corrupt*freed, data=My_Data)
+re = my_model_fin$residuals
+
+
+plot(re, main="Graph 3: Time Series Plot of the Residuals", xlab=TeX("i"), ylab=TeX("e_i"))
+lines(re)
+abline(h=0)
+
+
+```
+
+### b) Runs Test for Independence
+<br>
+<font size="4"><p>$H_0:\; e_i\; are\; independent\; i=1,2,...,n$ <br>
+$H_a:\; e_i\; are\; not\; independent\; i=1,2,...,n$ <br>
+Use R to calculate p.m.f. of random variable U <br>
+$p-value=\Pr(U\leq u)$ </p>
+</font>
+
+<span style="color:red"> <font size="4">*NOTE: For all tests I will use 95% CI* </font></span>
+
+```{r }
+ library(lawstat)
+ runs.test(re, plot.it=TRUE)
+```
+#### Note
+<font size="4">Here  A is non-negative residuals $e_i\geq0$, B is negative residuals $e_i<0$, u=25.
+p-value=1 or 100%
+</font>
+
+#### Comment 
+><font size="4">According to Graph 3 residuals are independent,  as there is no repeated pattern, and I do not see a clear relationship between $e_i$ and $i$. Any $e_j$ can not be predicted by the previous resudials. So there does not exist any dependence.<br>
+Also, The Run Test of Independence failed to reject $H_0:\; e_i\; are\; independent\; i=1,2,...,n$ as p-value of 2 sided Runs Test is 1 or 100% is more than $\frac{\alpha}{2}$ i.e. 0.025.<br>
+Also, p-value=100% is more than any usual used $\frac{\alpha}{2}$. Usually $\alpha$ is  $1 \leq\alpha\leq10$ in %. Then $0.5 \leq\frac{\alpha}{2}\leq5$ in %. So $H_a:\; e_i\; are\; independent\; i=1,2,...,n$ is true. So, the graph 3 and The Run Test for Independence show the same conclusion, the independence of residuals.
+</font>
+
+## <span style="color:green">*4.2) Checking normality of residuals*</span>
+
+<font size="4">To check the normality of residuals we can construct Normal Q-Q plot of the residuals. Here each residual is plotted against its expected value under normality.<br> Points located near/ on a straight line suggest that these residuals are normally distributed, whereas points that depart from a straight line suggest that these residuals are not normally distributed.</font>
+
+### a) Normal Q-Q Plot
+```{r}
+
+qqnorm(re)
+qqline(re)
+
+```
+```{r}
+hist(re, xlab='residuals', main='Graph 4: Histogram of residuals', freq=FALSE)
+curve(dnorm(x, mean(re), sd(re)), add=TRUE)
+```
+
+#### Comment
+> By Normal Q-Q Plot of residuals it is difficult to determine residuals are normal distributed or not. Residuals in the range of theoretical quantiles from -1 till 1 are lies very close or on a normal curve, so they are normally distributed and other residuals with theoretical quantiles > 1 or < -1 lie with the change of theoretical quantiles depart far away from normal curve.<br>
+According to graph 4, it is clear seen that residuals are normally distributed, as histogram has a normal curve's shape. We can see that normal distribution is negative skew as it has a small left tail.<br>
+So I decided to conduct Shapiro-Wilk test to decide the residuals are normal distributed or not.
+
+
+### b) Shapiro-Wilk Test for Normality <br>
+<font size="4">
+<br>
+$H_0: e_1,e_2,...,e_n\sim N$ <br>
+$H_a: e_1,e_2,...,e_n\nsim N$<br>
+
+Test statistics W and p-value is calculated by R.
+</font>
+
+```{r}
+shapiro.test(re)
+```
+
+#### Comment
+>By Shapiro-Wilk Test for Normality W=0.61696 and p-value =3.507*$10^{-10}$ or approximately 0%. 
+As I used 95% CI $\alpha=0.05\; or\; 5$%. $p-value=3.507*10^{-10}\;<\;\alpha=0.05$, so reject $H_0: e_1,e_2,...,e_n\sim N$ and accept $H_a$ . It means the residuals are not normally distributed.
+
+## <span style="color:green">*4.3) Checking Homogeneity of Variance and linearity of  $\hat{Y}_{i}$ *</span>
+
+### a) Residuals vs Fitted values plot for checking Homogeneity of Variance and linearity of  $\hat{Y}_{i}$
+<font size="4">To check the linearity and homogeneity of Variance assumptions, we can plot  Residuals $e_i$ vs Fitted values $\hat Y_i$ graph.
+If the variance of residuals is homogeneous, we expect to see a constant spread/distance of the residuals to the 0 line across all $\hat Y_i$ values. If the linear model is a good fit, we expect to see the residuals evenly spread on either side of the 0 line.
+</font>
+
+```{r}
+fits = my_model_fin$fitted.values
+
+plot(re ~ fits,ylim=c(-0.05,0.05), main="Graph 5: Residuals vs Fitted values", xlab=TeX("\\hat{Y}_i "),
+     ylab=TeX("e_i "))
+#scatter.smooth(re ~ fits, main="Residuals vs Fitted values", xlab=TeX("\\hat{Y}_i "), ylab=TeX("e_i"))
+abline(h=0)
+```
+
+#### Comment
+> Firstly, according to Graph 5, there can be parabolic relationship between $e_i$ and $\hat Y_i$, as residuals are not evenly spread around y=0 line. So there is nonlinear relation between $\hat Y_i$ and $x_1,x_2,...,x_8$. Secondly, residuals do not depart from y=0 or become closer to y=0 with the increase of $\hat Y_i$. So there is a homogeneity of variance of residuals.
+
+### b) Levene’s Test for Homogeneity of Variance
+
+<font size="4">Split responses (happiness score) into ***t*** distinct groups based on predictor values (GDP per capita)<br>
+$H_0: \sigma_1^2=...=\sigma_t^2$<br>
+$H_a: \sigma_1^2\neq...\neq\sigma_t^2$<br>
+$Test\; Statistics\;(T.S.)\sim F_{t-p,n-t}$ <br>
+where t is number of groups, n is number of observations <br>
+The $p-value=\Pr(F_{t-p,n-t}\geq T.S.)$ </font>
+
+```{r}
+library(lawstat)
+#Look at plot Graph 1 to divide data into 3 groups
+breaks = c(8, 9,10, 12)
+groups = cut(Gdp, breaks)
+levene.test(re, groups)
+```
+#### Comment
+>For applying Levene's Test I divided my data into 3 groups [$8\leq GDP<9$, $9\leq GDP<10$,$10\leq GDP<12$ ] based on predictor values, GDP. The calculated p=0.581 or 58.1% and it is more than $\alpha=0.05$ or 5% and even more than any usual $\alpha$. Usually $\alpha$ is  $1 \leq\alpha\leq10$ in %. So we fail to reject $H_0: \sigma_1^2=...=\sigma_t^2$, which means the variance of residuals is constant/homogeneous. So I got the same result as from graph 5: Residuals vs Fitted values. <br>
+Note that the calculated p-value depends on how we divide our data into groups, what interval we used and on the number of intervals/groups. 
+
+## <span style="color:green">*4.4) Outliers *</span>
+
+### **Studentized deleted residuals**
+```{r}
+library(MASS)
+
+#Compute the studentized delted residuals
+stud.del.res <- studres(my_model_fin)
+print(stud.del.res)
+
+#Calculate the Bonferroni critical value for outliers:
+
+alpha = 0.05
+t <- qt(1-alpha/(2*length(stud.del.res)),
+                 length(stud.del.res)-9-1)
+                  
+sprintf("The critical value is t= %s", t)
+paste0("Any studentized residuals > ",t," ?  ",
+       any(abs(stud.del.res) > t))
+```
+
+#### Comment
+>By studentized deleted residual the critical t = 3.550966. By comparing absolute value of Studentized deleted residuals with the critical t, one outlier was determined. Observation 37, which |Studentized deleted residuals| = 78.681573781 is outlier as 78.68> critical t=3.5099. So $Y_{37}$ is outlier.
+
+
+### **Leverage**
+
+```{r}
+diagonal <- lm.influence(my_model_fin)$hat
+print("The diagonal elements of the hat matrix")
+print(diagonal)
+
+paste0("Any h_ii  > ",2*mean(diagonal)," ?  ",
+       any(diagonal > 2*mean(diagonal)))
+
+```
+
+#### Comment
+>By rule of thumb any leverage $h_{ii}$ > 2*$\bar{h}$ is flagged as having “high” leverage. In my project 
+2*$\bar{h}$=0.36. By rule of thumb there are 2 influential points. They are observation 1 and observation 46.
+$h_{1,1}$=0.37450674 and $h_{46,46}$= 0.39623731, they > 2*$\bar{h}$=0.36. As they are more than 
+2*$\bar{h}$, my model may be extrapolating far outside the general region of my data.
+
+### ** Cook’s distance**
+```{r}
+
+#g) Calculate Cook's distance D; for each case and prepare an index plot. Are any cases
+#influential according to this measure?
+
+table <- data.frame(My_Data$`Ladder score`,cooks.distance(my_model_fin),pf(cooks.distance(my_model_fin),9,length(My_Data$`Ladder score`)-9))
+colnames(table) = c("Y", "Cooks distance", "F percentile")
+head(table)
+
+index=1:length(My_Data$`Ladder score`)
+plot(index,cooks.distance(my_model_fin), type="l", col="red", lwd=3, xlab="Case index", ylab="Cook's distance", main="Index plot")
+paste0("Any F percentile  > ",0.5," ?  ",
+       any(pf(cooks.distance(my_model_fin),9,length(My_Data$`Ladder score`)-9) > 0.5))
+
+
+```
+
+#### Comment
+>To detect  high Cook's distance we calculate F(p,n-p), where n is a sample size and p is number of $\beta$'s. Compare F of each Cook's distance with 0.5. If F>0.5, then this Cook's distance is high. <br>
+By table of Cook's distance and Index plot there is one outlier. It is case 37. Cook's distance of case 37 is 1.802160 and its F percentile = 0.9027 > 0.5. So case 37 has disproportionate influence on the fitted regression surface as a whole. 
+
+### **DFFITs**
+
+
+```{r}
+
+table2 <- data.frame(My_Data$`Ladder score`,dffits(my_model_fin))
+colnames(table2) = c("Y", "DFFIT")
+head(table2)
+
+
+```
+#### Comment
+> In table 2 of DFFIT we can see that observation 37 has very high absolute value of DFFIT = 49.647517358 relatively to absolute value DFFIT of other observations, which are in range [0;1.1]. Also DFFIT of observation 37 > 1. So, observation 37 is outlier.
+
+### Note
+> By computation of Studentized deleted residuals, leverages, Cook's distances, DFFITs 3 ouliers were detected. They are case 37, case 1, case 46. They may affect the fitted regression function more than other points. If the outlying points follow the modeling assumptions and are representative, they may strengthen inference and reduce
+error in predictions. If not, outlying values may skew inference a lot and yield models with poor predictive properties.
+
+## <span style="color:red">*4.5) Multicollinearity *</span>
+
+### *VIF*
+
+```{r}
+library(car)
+
+vif(my_model_fin)
+
+#mod=update(my_model_fin,. ~ . -freed*corrupt+freed+corrupt)
+#vif(mod)
+```
+#### Comment
+> By calculating VIF we can see that corrruption, freedom and $freedom\times corruption$ are multicollinear as 
+their VIFs >10. I expected that they will be involved in a severe multicollinearity as $freedom\times corruption$ is an interaction term between corruption and freedom.
+
+## <span style="color:green">*4.6) Added variable plots *</span>
+
+<font size="4"> From Graph 5: Residuals $e_i$ vs Fitted values $\hat Y_i$, I came to conclusion that there is parabolic relationship between Y and $x_1$, $x_2$, ....,$x_8$. So I need to make a transformation on predictors
+to fix this violation. Added variable plots help to reveal which transformation on which predictor I should apply.
+</font>
+
+
+```{r}
+
+My_Data$corruptfreed=My_Data$`Perceptions of corruption`*My_Data$`Freedom to make life choices`
+
+#Added var plot for x1
+fit11 = lm(hapscore~ socsup+lifeexp+freed+generos+corrupt+dystopia+corruptfreed, data=My_Data)
+reYonithoutx1=fit11$residuals
+
+fit12 = lm(Gdp ~ socsup+lifeexp+freed+generos+corrupt+dystopia+corruptfreed, data=My_Data)
+rex1onwithoutx1=fit12$residuals
+#plot(reYonithoutx1 ~ rex1onwithoutx1, main="Graph 1: Added-Variable Plot for x1 (GDP)", xlab="e(x1|others)", ylab="e(Y|Y on without x1) ")
+scatter.smooth(x=rex1onwithoutx1, y=reYonithoutx1, main="Graph 1: Added-Variable Plot for x1 (GDP)",xlab="e(x1|others)", ylab="e(Y|others without x1)") 
+
+
+#Added var plot for x2
+fit21 = lm(hapscore~ Gdp+lifeexp+freed+generos+corrupt+dystopia+corruptfreed, data=My_Data)
+reYonithoutx2=fit21$residuals
+
+fit22 = lm(socsup~ Gdp+lifeexp+freed+generos+corrupt+dystopia+corruptfreed, data=My_Data)
+rex2onwithoutx2=fit22$residuals
+#plot(reYonithoutx2 ~ rex2onwithoutx2, main="Graph 2: Added-Variable Plot for x2 (social support)", xlab="e(x2|others)", ylab="e(Y|others without x2) ")
+scatter.smooth(x=rex2onwithoutx2, y=reYonithoutx2, main="Graph 2: Added-Variable Plot for x2 (social support)", xlab="e(x2|others)", ylab="e(Y|others without x2) ") 
+
+#Added var plot for x3
+fit31 = lm(hapscore~ Gdp+socsup+freed+generos+corrupt+dystopia+corruptfreed, data=My_Data)
+reYonithoutx3=fit31$residuals
+
+fit32 = lm(lifeexp~ Gdp+socsup+freed+generos+corrupt+dystopia+corruptfreed, data=My_Data)
+rex3onwithoutx3=fit32$residuals
+
+#plot(reYonithoutx3 ~ rex3onwithoutx3, main="Graph 3: Added-Variable Plot for x3 (life expectancy)", xlab="e(x3|others)", ylab="e(Y|others without x3) ")
+scatter.smooth(x=rex3onwithoutx3, y=reYonithoutx3, main="Graph 3: Added-Variable Plot for x3 (life expectancy)", xlab="e(x3|others)", ylab="e(Y|others without x3) ") 
+
+#Added var plot for x4
+fit41 = lm(hapscore~ Gdp+socsup+lifeexp+generos+corrupt+dystopia+corruptfreed, data=My_Data)
+reYonithoutx4=fit41$residuals
+
+fit42 = lm(freed~ Gdp+socsup+lifeexp+generos+corrupt+dystopia+corruptfreed, data=My_Data)
+rex4onwithoutx4=fit42$residuals
+
+#plot(reYonithoutx4 ~ rex4onwithoutx4, main="Graph 4: Added-Variable Plot for x4 (freedom to make life choice)", xlab="e(x4|others)", ylab="e(Y|others without x4) ")
+
+scatter.smooth(x=rex4onwithoutx4, y=reYonithoutx4, main="Graph 4: Added-Variable Plot for x4 (freedom to make life choice)", xlab="e(x4|others)", ylab="e(Y|others without x4) ")
+
+#Added var plot for x5
+fit51 = lm(hapscore~ Gdp+socsup+lifeexp+freed+corrupt+dystopia+corruptfreed, data=My_Data)
+reYonithoutx5=fit51$residuals
+
+fit52 = lm(generos~ Gdp+socsup+lifeexp+freed+corrupt+dystopia+corruptfreed, data=My_Data)
+rex5onwithoutx5=fit52$residuals
+
+#plot(reYonithoutx5 ~ rex5onwithoutx5, main="Graph 5: Added-Variable Plot for x5 (generosity)", xlab="e(x5|others)", ylab="e(Y|others without x5) ")
+
+scatter.smooth(x=rex5onwithoutx5, y=reYonithoutx5, main="Graph 5: Added-Variable Plot for x5 (generosity)", xlab="e(x5|others)", ylab="e(Y|others without x5) ")
+
+#Added var plot for x6
+fit61 = lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+dystopia+corruptfreed, data=My_Data)
+reYonithoutx6=fit61$residuals
+
+fit62 = lm(corrupt~ Gdp+socsup+lifeexp+freed+generos+dystopia+corruptfreed, data=My_Data)
+rex6onwithoutx6=fit62$residuals
+
+#plot(reYonithoutx6 ~ rex6onwithoutx6, main="Graph 6: Added-Variable Plot for x6 (Perceptions of corruption)", xlab="e(x6|others)", ylab="e(Y|others without x6) ")
+
+scatter.smooth(x=rex6onwithoutx6, y=reYonithoutx6, main="Graph 6: Added-Variable Plot for x6 (Perceptions of corruption)", xlab="e(x6|others)", ylab="e(Y|others without x6) ")
+
+#Added var plot for x7
+fit71 = lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+corrupt+corruptfreed, data=My_Data)
+reYonithoutx7=fit71$residuals
+
+fit72 = lm(dystopia~ Gdp+socsup+lifeexp+freed+generos+corrupt+corruptfreed, data=My_Data)
+rex7onwithoutx7=fit72$residuals
+
+#plot(reYonithoutx7 ~ rex7onwithoutx7, main="Graph 7: Added-Variable Plot for x7 (Ladder score in Dystopia)", xlab="e(x7|others)", ylab="e(Y|others without x7) ")
+
+scatter.smooth(x=rex7onwithoutx7, y=reYonithoutx7, main="Graph 7: Added-Variable Plot for x7 (Ladder score in Dystopia)", xlab="e(x7|others)", ylab="e(Y|others without x7) ")
+
+
+#Added var plot for x8
+fit81 = lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx8=fit81$residuals
+
+fit82 = lm(corruptfreed~ Gdp+socsup+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+rex8onwithoutx8=fit82$residuals
+
+#plot(reYonithoutx8 ~ rex8onwithoutx8, main="Graph 8: Added-Variable Plot for x8 (corruption*freedom)", xlab="e(x8|others)", ylab="e(Y|others without x8) ")
+
+scatter.smooth(x=rex8onwithoutx8, y=reYonithoutx8, main="Graph 8: Added-Variable Plot for x8 (corruption*freedom)", xlab="e(x8|others)", ylab="e(Y|others without x8) ")
+
+```
+
+#### Comment:
+> By 7 Added variable plots for predictor variables such as GDP, social support, life expectancy, freedom to make life choice, generosity, ladder score in Dystopia, Perceptions of corruption, we can see that there is a strong linear relationship between residuals($Y$| $x_{-j}$) and residuals($x_{j}$|$x_{-j}$). So every $x_j$ explains residual variability once the rest of the predictors are in the model. Also, as it is linear relation, I do not need to do any transformation on any $x_j$. <br>
+However on  graph Graph 8: Added-Variable Plot for $x_8$ (corruption*freedom) there is horizontal line, it means that $x_8$ predictor does not explain any residual variability once the rest of the predictors are in the model.
+
+
+## <span style="color:red">*5) Remedial Measures *</span>
+<font size="4">
+Remedial measures are some procedures that we can apply to fix problems of our Regression model such as  Nonlinear Relation, Non-Constant Variance,  Non-Independence of Errors, Non-Normality of Errors, Outliers. <br>
+<br>
+
+According to the results of the tests and analysis of the plots, my Regression model holds only 2 basic assumptions of MLR such as homogeneity of variance of residuals, independence of residuals.<br>
+By making diagnostics, I found out that 3 basic assumptions were violated. Residuals of the model have non-normal distribution. There is non-linear relationship between Y and $x_1$,$x_2$,...,$x_8$. Also, 3 predictors (corruption, freedom, $freedom\times corruption$) are involved into severe multicollinearity. <br>
+Added variable plots for each predictor show that that $x_8$ ($corruption\times freedom$) predictor does not explain any residual variability once the rest of the predictors are in the model. <br>
+By computation of Studentized deleted residuals, leverages, Cook's distances, DFFITs 3 outliers were detected. There are 3 outliers. They are case 37, case 1, case 46. All methods except leverage detected case 37 as an outlier.<br>
+<br>
+To fix these problems I decided to remove  $x_8$ ($corruption\times freedom$) predictor and observation 37 from the model to fix these violations. 
+</font>
+
+### A new model 
+
+<font size="4">
+I created new sheet in my Excel table and manually deleted observation 37 from it. Also, I removed $x_8$ ($corruption\times freedom$) predictor from the model.
+
+</font>
+```{r}
+require(foreign)
+require(MASS)
+library("readxl")
+library("plyr")
+
+
+new_Data <- read_excel("Data2.xlsx",sheet=2,range="B2:K51", col_names = TRUE)
+
+hapscore_new<-new_Data$`Ladder score`
+Gdp_new<-new_Data$`GDP per capita`
+socsup_new<-new_Data$`Social support`
+lifeexp_new<-new_Data$`Healthy life expectancy`
+freed_new<-new_Data$`Freedom to make life choices`
+generos_new<-new_Data$`Generosity`
+corrupt_new<-new_Data$`Perceptions of corruption`
+dystopia_new<-new_Data$`Ladder score in Dystopia +residual`
+
+irls= lm(hapscore_new~ Gdp_new+socsup_new+lifeexp_new+freed_new+generos_new+corrupt_new+dystopia_new, data=new_Data)
+summary(irls)
+
+```
+
+#### Comment:
+>By t-value test we reject $H_0$: $B_{i}$=0 for all predictors in new model. As p-val= <$2$x$10^{-16}$ and p-val<0.05. <br>
+By F-test which tests if all $B_{i}$=0 or not, we can reject $H_0$: $B_{1}=B_{2}=...=B_{14}=0$ as p-val= <$2$x$10^{-16}$ < $\alpha$=0.05. So there is at least one nonzero predictor. So F-test for full model and t-test for each predictor in the presence of other predictors came to the same conclusion that there are nonzero $\beta$'s.<br>
+Also, adjusted $R^2=1$, which means our model will predict data not used to build the model very well. Also, the model has MSE=0.<br>
+So $\hat{Y}_{i} = -4.556+0.349*X_{i,1}+ 2.239*X_{i,2}+0.031*{X}_{i,3} +1.22*{X}_{i,4}+0.657*{X}_{i,5}
+-0.637*{X}_{i,6}+ 0.999*{X}_{i,7}$.
+
+
+
+#### Note
+> After changing my model I will make diagnostics again to see does new model follow the basic assumptions of MLR.
+
+## <span style="color:green">*5.1) Residual analysis: homogeneity,independence, normality of residuals and linearity between Y and $x_1$,....,$x_7$*</span>
+
+```{r}
+
+# 1) Independence of residuals
+
+library(lawstat)
+library(latex2exp)
+
+re_new = irls$residuals
+
+#a) plot: e_i vs i
+  
+plot(re_new, main="Graph 9: Time Series Plot of the Residuals", xlab=TeX("i"), ylab=TeX("e_i"))
+lines(re_new)
+abline(h=0)
+
+#b) Runs Test for Independence
+
+ library(lawstat)
+ runs.test(re_new, plot.it=TRUE)
+```
+
+
+```{r}
+#4.2) Checking normality of residuals
+
+#a) Normal Q-Q Plot
+
+qqnorm(re_new,ylim=c(-0.01,0.01))
+qqline(re_new)
+
+#b) Histogram of residuals
+hist(re_new, xlab='residuals', main='Graph 10: Histogram of residuals', freq=FALSE)
+curve(dnorm(x, mean(re_new), sd(re_new)), add=TRUE)
+
+#c) Shapiro-Wilk Test for Normality
+shapiro.test(re_new)
+
+
+```
+
+
+
+```{r}
+#Checking Homogeneity of Variance and linearity of  $\hat{Y}_{i}$
+
+fits = irls$fitted.values
+plot(re_new ~ fits, ylim=c(-0.01,0.01), main="Graph 11: Residuals vs Fitted values", xlab=TeX("\\hat{Y}_i "), ylab=TeX("e_i "))
+abline(h=0)
+
+#b) Levene’s Test for Homogeneity of Variance
+
+library(lawstat)
+#Look at plot Graph 1 to divide data into 3 groups
+breaks = c(8, 9,10, 12)
+groups = cut(Gdp_new, breaks)
+levene.test(re_new, groups)
+```
+#### Comment 
+><font size="4"> **1) Independence of residuals** <br>
+<br> According to Graph 9: Time Series Plot of the Residuals, residuals are independent,  as there is no repeated pattern, and I do not see a clear relationship between $e_i$ and $i$. Any $e_j$ can not be predicted by the previous residuals. So there does not exist any dependence.<br>
+Also, The Run Test of Independence failed to reject $H_0:\; e_i\; are\; independent\; i=1,2,...,n$ as p-value of 2 sided Runs Test is 0.6627 or 66.27% is more than $\frac{\alpha}{2}$ i.e. 0.025.<br>
+Also, p-value=66.27% is more than any usual used $\frac{\alpha}{2}$. Usually $\alpha$ is  $1 \leq\alpha\leq10$ in %. Then $0.5 \leq\frac{\alpha}{2}\leq5$ in %. So $H_a:\; e_i\; are\; independent\; i=1,2,...,n$ is true. So, the graph 9 and The Run Test for Independence show the same conclusion, the independence of residuals.<br>
+<br>
+**2) Normality of residuals** <br>
+<br> By Normal Q-Q Plot of residuals it is difficult to determine residuals are normal distributed or not. Residuals in the range of theoretical quantiles from -1.5 till 1.5 lie very close to or on a normal curve, so they are normally distributed and other residuals with theoretical quantiles > 1.5 or < -1.5 with the change of theoretical quantiles depart far away from normal curve.<br>
+According to graph 10: Histogram of Residuals, it is clear seen that residuals are normally distributed, as histogram has a normal curve's shape. We can see that normal distribution is negative skew as it has small left tail.<br>
+So I decided to conduct Shapiro-Wilk test to decide the residuals are normal distributed or not.
+By Shapiro-Wilk Test for Normality W=0.8808 and p-value =0.0001374 or approximately 0.01%. 
+As I used 95% CI $\alpha=0.05\; or\; 5$%. p-value=0.0001374 < $\alpha=0.05$ so I reject $H_0: e_1,e_2,...,e_n\sim N$ and accept $H_a$ . It means the residuals are not normally distributed.<br><br>
+**3) Homogeneity of Variance and linearity of  $\hat{Y}_{i}$ **<br><br>
+Firstly, according to Graph 11: Residuals vs Fitted values, there is no clear pattern between $e_i$ and $\hat Y_i$.Residuals evenly spread on either side of the 0 line. So there is linear relationship between Y and $x_1$,...,$x_7$. Secondly, residuals do not depart from y=0 or become closer to y=0 with the increase of $\hat Y_i$. So there is a homogeneity of variance of residuals.<br>
+For applying Levene's Test I divided my data into 3 groups [$8\leq GDP<9$, $9\leq GDP<10$,$10\leq GDP<12$ ] based on a predictor variable, GDP. The calculated p=0.4366 or 43.66% and it is more than $\alpha=0.05$ or 5% and even more than any usual $\alpha$. Usually $\alpha$ is  $1 \leq\alpha\leq10$ in %. So we fail to reject $H_0: \sigma_1^2=...=\sigma_t^2$, which means the variance of residuals is constant/homogeneous. So I got the same result as from graph 11.<br>
+</font>
+
+
+## <span style="color:green">*5.2) Outliers *</span>
+
+###**Studentized deleted residuals**
+```{r}
+library(MASS)
+
+#Compute the studentized delted residuals
+stud.del.res <- studres(irls)
+print(stud.del.res)
+
+#Calculate the Bonferroni critical value for outliers:
+
+alpha = 0.05
+t <- qt(1-alpha/(2*length(stud.del.res)),
+                 length(stud.del.res)-8-1)
+                  
+sprintf("The critical value is t= %s", t)
+paste0("Any studentized residuals > ",t," ?  ",
+       any(abs(stud.del.res) > t))
+```
+### **Leverage**
+
+```{r}
+diagonal <- lm.influence(irls)$hat
+print("The diagonal elements of the hat matrix")
+print(diagonal)
+
+paste0("Any h_ii  > ",2*mean(diagonal)," ?  ",
+       any(diagonal > 2*mean(diagonal)))
+
+```
+
+
+### ** Cook’s distance**
+```{r}
+
+
+table3 <- data.frame(new_Data$`Ladder score`,cooks.distance(irls),pf(cooks.distance(irls),8,length(new_Data$`Ladder score`)-8))
+colnames(table3) = c("Y", "Cooks distance", "F percentile")
+head(table3)
+
+index=1:length(new_Data$`Ladder score`)
+plot(index,cooks.distance(irls), type="l", col="red", lwd=3, xlab="Case index", ylab="Cook's distance", main="Index plot")
+paste0("Any F percentile  > ",0.5," ?  ",
+       any(pf(cooks.distance(irls),8,length(new_Data$`Ladder score`)-8) > 0.5))
+
+
+```
+
+### **DFFITs**
+
+
+```{r}
+
+table4 <- data.frame(new_Data$`Ladder score`,dffits(irls))
+colnames(table4) = c("Y", "DFFIT")
+head(table4)
+
+```
+#### Comment
+>**1) Studentized deleted residuals**<br>
+By studentized deleted residuals the critical t = 3.5439. By comparing absolute value of Studentized deleted residuals with the critical t, the one outlier was determined. Observation 14, which |Studentized deleted residuals| = 5.58297177 is outlier as 5.58297177 > critical t=3.5439. So $Y_{14}$ is outlier.<br>
+<br>
+**2) Leverage** <br>
+By rule of thumb any leverage $h_{ii}$ > 2*$\bar{h}$ is flagged as having “high” leverage. In my project 
+2*$\bar{h}$=0.32653. By rule of thumb there are 3 influential points. They are observation 1, observation 40, observation 42.
+$h_{1,1}$=0.34660147, $h_{40,40}$= 0.32887598, $h_{42,42}$= 0.33568260, they > 2*$\bar{h}$=0.32653. 
+As they are more than 2*$\hat{h}$, my model may be extrapolating far outside the general region of my data.<br>
+<br>
+**3) Cook’s distance** <br>
+To detect  high Cook's distance we calculate F(p,n-p), where n is a sample size and p is number of $\beta$'s. Compare F of each Cook's distance with 0.5. If F>0.5, then this Cook's distance is high. <br>
+By Index plot there is one observation, observation 19, has a high Cook's distance (0.4001318) relatively to others. However, I do not think it is influential as by table of Cook's distance its F percentile=0.08600397 <  0.5.<br>
+<br>
+**4) DFFITs ** <br>
+In table 4 of DFFIT we can see that observation 14 (DFFIT = -1.638233500), observation 19 (DFFIT = 1.957046176) have very high absolute value of DFFIT relatively to absolute value DFFIT of other observations, which are in range [0;1]. Also |DFFIT| of these observations  > 1. So, they are outliers.<br>
+
+## <span style="color:green">*5.3) VIF and Added variable plots *</span>
+
+### *VIF*
+
+```{r}
+library(car)
+
+vif(irls)
+
+```
+
+#### Comment
+> By calculating VIF we can see that VIFs of each predictor are in range [1.5;3.3]. So every VIF < 10. This means that there is no predictor, which is involved in a severe multicollinearity.
+
+### Added variable plots
+
+
+```{r}
+
+#Added var plot for x1
+fit11 = lm(hapscore~ socsup+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx1=fit11$residuals
+
+fit12 = lm(Gdp ~ socsup+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+rex1onwithoutx1=fit12$residuals
+
+#plot(reYonithoutx1 ~ rex1onwithoutx1, main="Graph 1: Added-Variable Plot for x1 (GDP)", xlab="e(x1|others)", ylab="e(Y|Y on without x1) ")
+
+scatter.smooth(x=rex1onwithoutx1, y=reYonithoutx1, main="Graph 1: Added-Variable Plot for x1 (GDP)",xlab="e(x1|others)", ylab="e(Y|others without x1)") 
+
+
+#Added var plot for x2
+fit21 = lm(hapscore~ Gdp+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx2=fit21$residuals
+
+fit22 = lm(socsup~ Gdp+lifeexp+freed+generos+corrupt+dystopia, data=My_Data)
+rex2onwithoutx2=fit22$residuals
+
+#plot(reYonithoutx2 ~ rex2onwithoutx2, main="Graph 2: Added-Variable Plot for x2 (social support)", xlab="e(x2|others)", ylab="e(Y|others without x2) ")
+
+scatter.smooth(x=rex2onwithoutx2, y=reYonithoutx2,main="Graph 2: Added-Variable Plot for x2 (social support)", xlab="e(x2|others)", ylab="e(Y|others without x2) ")
+
+
+#Added var plot for x3
+fit31 = lm(hapscore~ Gdp+socsup+freed+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx3=fit31$residuals
+
+fit32 = lm(lifeexp~ Gdp+socsup+freed+generos+corrupt+dystopia, data=My_Data)
+rex3onwithoutx3=fit32$residuals
+
+#plot(reYonithoutx3 ~ rex3onwithoutx3, main="Graph 3: Added-Variable Plot for x3 (life expectancy)", xlab="e(x3|others)", ylab="e(Y|others without x3) ")
+
+scatter.smooth(x=rex3onwithoutx3, y=reYonithoutx3, main="Graph 3: Added-Variable Plot for x3 (life expectancy)", xlab="e(x3|others)", ylab="e(Y|others without x3) ")
+
+#Added var plot for x4
+fit41 = lm(hapscore~ Gdp+socsup+lifeexp+generos+corrupt+dystopia, data=My_Data)
+reYonithoutx4=fit41$residuals
+
+fit42 = lm(freed~ Gdp+socsup+lifeexp+generos+corrupt+dystopia, data=My_Data)
+rex4onwithoutx4=fit42$residuals
+
+#plot(reYonithoutx4 ~ rex4onwithoutx4, main="Graph 4: Added-Variable Plot for x4 (freedom to make life choice)", xlab="e(x4|others)", ylab="e(Y|others without x4) ")
+
+scatter.smooth(x=rex4onwithoutx4, y=reYonithoutx4,main="Graph 4: Added-Variable Plot for x4 (freedom to make life choice)", xlab="e(x4|others)", ylab="e(Y|others without x4) ")
+
+
+#Added var plot for x5
+fit51 = lm(hapscore~ Gdp+socsup+lifeexp+freed+corrupt+dystopia, data=My_Data)
+reYonithoutx5=fit51$residuals
+
+fit52 = lm(generos~ Gdp+socsup+lifeexp+freed+corrupt+dystopia, data=My_Data)
+rex5onwithoutx5=fit52$residuals
+
+#plot(reYonithoutx5 ~ rex5onwithoutx5, main="Graph 5: Added-Variable Plot for x5 (generosity)", xlab="e(x5|others)", ylab="e(Y|others without x5) ")
+
+scatter.smooth(x=rex5onwithoutx5, y=reYonithoutx5,main="Graph 5: Added-Variable Plot for x5 (generosity)", xlab="e(x5|others)", ylab="e(Y|others without x5) ")
+
+#Added var plot for x6
+fit61 = lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+dystopia, data=My_Data)
+reYonithoutx6=fit61$residuals
+
+fit62 = lm(corrupt~ Gdp+socsup+lifeexp+freed+generos+dystopia, data=My_Data)
+rex6onwithoutx6=fit62$residuals
+
+#plot(reYonithoutx6 ~ rex6onwithoutx6, main="Graph 6: Added-Variable Plot for x6 (Perceptions of corruption)", xlab="e(x6|others)", ylab="e(Y|others without x6) ")
+
+scatter.smooth(x=rex6onwithoutx6, y=reYonithoutx6,main="Graph 6: Added-Variable Plot for x6 (Perceptions of corruption)", xlab="e(x6|others)", ylab="e(Y|others without x6) ")
+
+
+#Added var plot for x7
+fit71 = lm(hapscore~ Gdp+socsup+lifeexp+freed+generos+corrupt, data=My_Data)
+reYonithoutx7=fit71$residuals
+
+fit72 = lm(dystopia~ Gdp+socsup+lifeexp+freed+generos+corrupt, data=My_Data)
+rex7onwithoutx7=fit72$residuals
+
+#plot(reYonithoutx7 ~ rex7onwithoutx7, main="Graph 7: Added-Variable Plot for x7 (Ladder score in Dystopia)", xlab="e(x7|others)", ylab="e(Y|others without x7) ")
+
+scatter.smooth(x=rex7onwithoutx7, y=reYonithoutx7,main="Graph 7: Added-Variable Plot for x7 (Ladder score in Dystopia)", xlab="e(x7|others)", ylab="e(Y|others without x7) ")
+
+
+
+
+
+```
+
+
+#### Comment:
+> By all 7 Added variable plots for each predictor variable we can see that there is a strong linear relationship between residuals($Y$| $x_{-j}$) and residuals($x_{j}$|$x_{-j}$). So every $x_j$ explains residual
+variability once the rest of the predictors are in the model, so I need to keep all 7 predictors in my model. Also, as it is linear relationship, I do not need to apply any transformation on any $x_j$. 
+
+# <span style="color:purple">*Conclusion*</span>
+
+### <span style="color:red">**Conclusion**</span>
+<font size="4">
+I regress Y (happiness score) on my 8 predictors (region,GDP,corruption,freedom to make life choice,social support, healthy life expectancy,generosity,Ladder score in Dystopia). After conducting the appropriate tests and plotting appropriate graphs I came to the conclusion that I need to drop categorical variable, Regional indicator, as by F-test it is not necessary and it has a small influence on the fitted value.<br>
+Then I made model selection by applying Stepwise regression and looking at values of model selection criterion such as Adjusted $R^2$, $AIC$, $C_p$. I got a new model, which was based on 8 predictors (GDP,corruption,freedom to make life choice,social support, healthy life expectancy,generosity,Ladder score in Dystopia, $freedom\times corruption$).<br>
+After applying the studied on the lectures methods I found out that new regression model holds the homogeneity of variance, the normality, the independence assumptions. However, it violates the linearity between Y and $x_1,...,x_8$, multicollinearity and the model has 3 outliers.The most influential observation was observation 37. By calculating VIF and constructing added variable plot I came to conclusion that an interaction term  $freedom\times corruption$ was involved in severe multicollinearity and did not explain any residual variability. <br>
+As a remedial measure, I dropped interaction term $freedom\times corruption$ from the model and removed observation 37.<br>
+I made diagnostics again. The new model violates only normality of residuals assumption and has 4 outliers (observation 1, observation 14, observation 40, observation 42). However, these outliers do not negatively affect the regression model, because adjusted $R^2=1$, which means the model will predict data not used to build the model very well and the model has MSE=0. Also, by F-test and t-test the presence of each predictor is required and Added Variable plots showed that each predictor explains the residual variability in the presence of other predictors.<br>
+Also, I can ignore non-normality of residuals, the sample size =50 is large enough, as according to Central Limit Theorem the sampling distribution of the estimates will converge toward a normal distribution as N increases to infinity, when residuals are independent and identically distributed, and when variance of residuals is homogeneous.<br>
+So my remedial measure was efficient and I successfully find the right model, which holds all basic assumptions of MLR.
+
+### <span style="color:red">**Evaluation**</span>
+<font size="4">
+I would like to mention some suggestions that can improve my analysis: <br><br>
+**1. Use larger samples, try to find more observations.** <br>
+The larger size of sample you have, the more precise results you will get and the more accurate your regression model will be. Also, if sample size is large enough, non-normality of residuals can be ignored. <br><br>
+**2. Use another predictor variables instead of social support,freedom to make life choices, Generosity, Corruption Perception**<br>
+All these 4 predictor variables are the national average of the binary responses (either 0 or 1) to the GWP questions, where answers "Yes" or "No". For calculating them researchers make a survey of residents. However, opinions of residents can be biased. For example, there can be residents that never traveled to another countries and did not see the quality of life in another countries, that's why they think that the quality of life in their countries are bad. So I would like to replace them with approved world recognized economic indexes. For example instead of using  Corruption Perception from the World Happiness Report 2021, I would like to use  Corruption Perceptions Index (CPI) next time. Generosity can be replaced by annually amount of donations made by the residents of a particular country. <br>
+Also, these variables are categorical nominal. If I was one of author of  World Happiness Report 2021, I would like to make them ordinal. Instead of asking GWP questions, that have only 2 answers ("Yes" or "No"), I would like to ask GWP question such as from 1 to 10 please assess the freedom to choose our life, where 1 - you can't make life decisions, 10- you have absolute freedom to make life decisions by yourself. <br><br>
+**3. I would like to add new predictor variables to the model** <br>
+ The response variable Y in my project was Happiness score (ladder score), which is the national average response to the question of life evaluations. The experts ask the residents to assess their own life in this country using a scale from 0 (the worst possible life) to 10 (the best possible life). I think I need to add new predictors such as HDI, literacy rate, unemployment rate, poverty rate, Gini index, to my model, as all these economic indexes have a direct relation to assessment of quality of life in countries. For example, Gini index helps to measure income inequality in the country. The addition of these predictors to my model can improve the fit of the model and its prediction property.
+</font>
+
+### <span style="color:blue">***References***</span>
+<font size="4">
+1. The data for the analysis was taken from World Happiness Report 2021: https://worldhappiness.report/ed/2021/.
+<br>
+2. The analysis is based on the lecture slides of professor Zhenisbek Assylbekov and on Chapter 6, Chapter 7, Chapter 8, Chapter 9, Chapter 10 and Chapter 11 of Kutner's "Applied Linear Statistical Models" textbook.
+</font>

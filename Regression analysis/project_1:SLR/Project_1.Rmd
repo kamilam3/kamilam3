@@ -1,0 +1,565 @@
+---
+title: "Project 1"
+output:
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+Author: Kamila Makhambetova
+
+# <span style="color:purple">*Introduction*</span>
+
+
+### Research Questions: 
+>  Is the estimated regression model between the unemployment rate and life expectancy in Canada from 1983 till 2013 appropriate for the application? How does it look?
+
+### Research Interest
+> My mother was disapointed when she found out that the female retirement age was increased from 58 to 59.5 for her. She said that life expectancy in Kazakhstan is low because of the high retirement age. Unfortunately, I was not able to find enough data on the retirement age. That's why I decided to investigate the influence of unemployment on life expectancy. I chose Canada because it is a well-developed country with good medicine and infrastructure, access to clean water, so there are fewer factors that can negatively affect life expectancy.
+
+### Data
+
+>Data was taken from DataBank of The World Bank: https://databank.worldbank.org . DataBank is an analysis and visualization tool that contains collections of time series data on a variety of topics. On this site, you can generate the own tables, maps and graphs with indicators of countries that you need. All statistical data were gathered from official recognizable reliable sources and international organizations.
+<br>
+The life expectancy of Canada data was taken from United Nations Population Division. It was derived from male and female life expectancy at birth from sources such as Census reports and other statistical publications from national statistical offices, Eurostat: Demographic Statistics, United Nations Statistical Division, Population and Vital Statistics Report (various years), U.S. Census Bureau: International Database, and Secretariat of the Pacific Community: Statistics and Demography Programme.<br>
+The unemployment rate of Canada was taken from International Labour Organization, ILOSTAT database.
+
+#### Definitions
+
+ <font size="4"> **Life expectancy (in age)** is a measure of how long a newborn expects to live on average, assuming the current mortality rate does not change.  It reflects the overall mortality level of a population and summarizes the mortality pattern that prevails across all age groups in a given year. It is calculated in a period life table which provides a snapshot of a population's mortality pattern at a given time.
+
+**Unemployment rate (in %)** is a ratio of the unemployed people, that is without work but available for and seeking employment, and total labour force.
+
+$Unemployment \; rate = \frac{Unemployed  \; People}{Labor  \; Force}*100$
+
+**Response variable (y)**: Life expectancy of Canada population (in age) <br>
+**Explanatory variable (x)**: Unemployment rate of Canada (in %)
+</font>
+
+### Hypothesis and Explanation (about the correlation)
+
+#### Hypothesis:
+> The unemployment rate and life expectancy have an inverse relation. 
+The rise in the unemployment rate causes a fall in the life expectancy.
+
+#### Explanation of hypothesis
+
+> The job is a main source of personal income of a person. When you have a job, you have a stable income, salary. You can spend this salary on renting a house or an apartment, buying healthy and required for human organism expensive food products such as meat, fish, fruits and etc.  Also, in many European countries, Canada and US, the companies provide their workers with medical insurances that cover from 50 % to 100% of medical expenses. So having the job allows you to go to hospitals, as medical services checks are very high in these countries. It leads to the rise in the unemployment rate causes a fall in the life expectancy. So, the unemployment rate and life expectancy have the inverse relationship. However, it is difficult to make assumptions about the linearity of this relationship without analyzing the appropriate graph and calculating the correlation coefficient.
+
+#### Note
+ > It is difficult to judge the appropriateness of this regression model by just looking at the data table and without drawing proper graphs and conducting proper tests. So all conclusions about the linearity of Y, homogeneity of variance of residuals, independence of residuals, normality of residuals will be made in 'Analysis of Data' section.
+
+### Method
+
+<font size="4"> 1. Linear modeling: Life expectancy of Canada population vs Unemployment rate of Canada graph and regression line <br>
+2. Correlation coefficient <br>
+3. Diagnostics for Predictor Variable (x): Sequence plot $x_i$ vs $i$, Boxplot. <br>
+4. Independence of residuals: Sequence plot $e_i$ vs $i$ and Test for Independence <br>
+5. Normal distribution of residuals: QQ Plot, Shapiro-Wilk Test for Normality <br>
+6. Homogenity of Variance and linearity of  $\hat{Y}_{i}$: Residuals $e_i$ vs Fitted values $\hat{Y}_{i}$, Levene’s Test for Homogeneity of Variance <br>
+7. Remedial measures: Randomizing data and Box-Cox transformation.</font><br>
+
+# <span style="color:purple">*Analysis of Data*</span>
+
+## <span style="color:red">*1) Linear Modeling*</span>
+
+### Table on which my project is based
+
+```{r My_Data, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages('plyr', repos = "http://cran.us.r-project.org")
+#install.packages('XQuartz', repos = "https://www.xquartz.org/")
+#install.packages("readxl")
+library("readxl")
+library("plyr")
+#library("XQuartz")
+#install.packages("xlsx")
+#library(xlsx)
+
+My_Data <- read_excel("Data.xlsx",sheet=2,range="A1:C32", col_names = TRUE)
+
+lifeexp<-My_Data$`Life expectancy at birth, total (years)`
+unemplrate<-My_Data$`Unemployment, total (% of total labor force) (national estimate)`
+
+My_Data
+
+```
+
+### Graph Life expectancy vs Total unemployment rate
+```{r scatterplot,fig.width=8, fig.height=6}
+scatter.smooth(x=unemplrate, y=lifeexp, main="Graph 1: Life expectancy~Total unemployment rate",xlab="Unemployment rate of Canada population (%)", ylab="Life expectancy of Canada population (age)") 
+```
+
+#### Comment:
+>Graph 1 shows that there is an inverse relationship between the unemployment rate and the life expectancy. The increase in the unemployment rate causes a decrease in the life expectancy. Based on graph 1 it is not clear that there exists a linear relationship between these 2 variables. I assume, there are some outliers, as there are points that lie far away from regression line, such as points with $life\; expectancy\geq 81$ and $life\; expectancy\leq 77$. Further tests or methods are required to apply for determining the nature of relationship. 
+
+### Linear Modeling Table
+```{r}
+
+matrix_coef <- summary(lm(lifeexp~ unemplrate, data=My_Data))$coefficients
+matrix_coef
+
+B0 <- matrix_coef[1, 1]
+B1 <- matrix_coef[2, 1]
+sB0<- matrix_coef[1, 2]
+sB1<- matrix_coef[2, 2]
+```
+
+```{r}
+sprintf("B0 = %s and B0's std error = %s ", B0, sB0)
+sprintf("B1 = %s and B1's std error = %s ", B1, sB1)
+sprintf("Regression function: Y= %s %s *X", B0,B1)
+```
+#### Comment:
+>The slope of estimated Y ($\hat{Y}_{i}$) is negative, which is represented by $\hat{B}_{1}$= -0.74348. It means 1% increase in the unemployment rate causes 0.74348 age fall in life expectancy. The intercept $\hat{B}_{0}$ = 85.11508. It is the theoretical value of $\hat{Y}_{i}$ when x=0 i.e. unemployment rate = 0%, which means all people of labor force are employed. It is an extrapolation, as we never observe 0 unemployment rate in Canada and in any other country. So we predict Y for x that places far outside the range of x in the data. As we can see the min unemployment rate on graph 1 is approximate 6 %. <br>
+So $\hat{Y}_{i}=\hat{B}_{0}+\hat{B}_{1}*{X}_i$ $\Rightarrow$ <br>
+$\hat{Y}_{i} = 85.11508-0.74348*{X}_i$
+
+## <span style="color:red">*2) Correlation coefficient*</span>
+
+### Theory about Correlation coefficient
+
+<font size="4"> 
+<p>**$R^2$** is **coefficient of determination**,the proportion of total sample variation in Y that is explained by its linear relationship with x.
+<ol>
+<li>$R^2 = 1$ ⇒ data perfectly linear.</li>
+<li>$R^2 = 0$ ⇒ $\hat{Y}_i=\hat{B}_0$ and $\hat{B}_1=0$ </li>
+<li>The closer $R^2$ is to 1, the greater the linear relationship between x and Y</li>
+<li>$R^2=\frac{SSR}{SST}=\frac{SSR}{SSR+SSE}$</li>
+</ol> </p>
+<br>
+<p>$r$ is **the sample correlation** between x and Y <br>
+
+<ol>
+<li>$r=\pm\sqrt{R^2}$</li>
+<li>sign(r)=sign(b1)</li>
+</ol>
+
+<ul>
+<li>$r ≈ 0$ ⇒ little  or no linear association b/w x and Y </li>
+<li>$r ≈ 1$ ⇒ strong positive, linear association b/w x and Y </li>
+<li>$r ≈ −1$ ⇒ strong negative, linear association b/w x and Y </li>
+</ul></p>
+</font> 
+
+
+```{r}
+my_model=lm(lifeexp~ unemplrate, data=My_Data)
+anova(my_model)
+matrix_coef2 <- anova(my_model)
+print(matrix_coef2)
+MSE <- matrix_coef2[2, 3]
+MSR <- matrix_coef2[1, 3]
+SSR <- matrix_coef2[1, 2]
+SSE <- matrix_coef2[2, 2]
+#SST=SSR+SSE
+R<-SSR/(SSR+SSE)
+
+#sprintf("MSE= %s",MSE)
+#sprintf("MSR= %s",MSR)
+sprintf("SSR= %s",SSR)
+sprintf("SSE= %s",SSE)
+sprintf("R^2=%s",R)
+
+#sign(b1)=sign(r) and R^2=r^2
+if (B1<0) {
+  sprintf("r= %s",-sqrt(R))
+} else {
+  sprintf("r= %s",sqrt(R))
+}
+```
+
+#### Comment
+>Based on above calculations I got that $R^2=0.51167$ and $r = -0.71531$, they are both close to 1 rather than 0. $R^2$ represents that 51.17% of total sample variation in Y, life expectancy, is explained by its linear relationship with X, unemployment rate. $r$ represents the moderate negative, linear association between X and Y. So when X increases Y decreases. I think the cause of $R^2=0.51167$ is the wide distribution of points in graph 1. There are a lot of points on graph 1 that far away from the regression line, points are not distributed in one particular narrow band region. For example, points above life expectancy=81 and below life expectancy=77.5.
+
+## <span style="color:red">*3) Diagnostics for Predictor Variable (x)*</span>
+
+<font size="4"> 
+We need diagnostic information about the predictor variable to see if there are any outlying X values that could influence the appropriateness of the fitted regression function.
+</font>
+
+### a) Sequence plot $x_i$ vs $i$  
+
+<font size="4"> 
+As the unemployment rate is the predictor variable (X), it should be independent. So $X_i$ can't be predicted from $X_{i-1}$. Let construct $x_i$ against $i$ plot to check the independence of the predictor variable (unemployment rate).
+</font>
+
+```{r}
+
+plot(unemplrate, main="Graph 2: Sequence plot",ylab="unemployment rate (%)")
+lines(unemplrate)
+```
+
+#### Comment
+> According to Graph 2 $x_i$ are dependent, as there is the repeated pattern, as $x_i$ firstly decreases then increases then decreases and so on with the increase of i. Any $x_j$ can be predicted by the previous unemployment rates. I think there is some function f containing sin or cos, that connects $x_i$ with $x_{i-1}$.  
+
+### b) Box plot for the predictor variable
+
+<font size="4"> The drawing box plot helps to determine the presence of some outliers and to describe the distribution of predictor variable X (unemployment rate).</font> 
+
+
+```{r}
+
+boxstat<-boxplot(unemplrate, main='Boxplot of unemployment rate', ylab = "Unemployment rate (%)")
+
+```
+```{r}
+boxstat2<-boxstat$stats
+minim=boxstat2[1,1]
+Q1=boxstat2[2,1]
+Q2=boxstat2[3,1]
+Q3=boxstat2[4,1]
+maxim=boxstat2[5,1]
+
+sprintf("min= %s, Q1= %s, med= %s, Q3= %s, Q4= %s",minim,Q1,Q2,Q3,maxim)
+```
+
+#### Comment
+>The box plot of Unemployment rate shows $Q_1, Q_2=median, Q_3, min, max$ of unemployment rate. Based on the box plot, $min=6.04, Q_1=7.25, median=8.06, Q_3=9.61, max=12.02$. It is clearly seen the middle 50% of unemployment rate ranges from 7.25 to 9.61 and they are not symmetric as the median= 8.06 is not located in the middle of the central box. The median is closer to $Q_1$, and the whisker is shorter on the lower end of the box, so the distribution is skewed right. Also, the box plot does not contain outliers, so there are no outlying X values. 
+
+## <span style="color:red">*Residual analysis* </span>
+
+<font size="4"> 
+Usually, we do not make any diagnostic of the response variable Y because Y=f(X), where X is the predictor variable. So usually diagnostics of Y are carried out indirectly through residual analysis, as $e_i=Y_i-\hat Y_i$.
+
+Before going to tests and procedures described in steps 4,5,6 of Method, we need to learn basic assumptions on which simple linear regression theory is built. 
+<br>
+<br>
+<p>**Assumptions of SLR** </p>
+<p>$\epsilon_1,\epsilon_2....\epsilon_n \backsim^{iid} N(0,\sigma^2)$  <br>
+$Y_i=\beta_0+\beta_1*x_i+\epsilon_i, \quad i=1,....,n$  <br>
+<br>
+If the model is appropriate for the given data, the residuals $e_i$ should reflect the assumed properties for the error terms $\epsilon_i$.
+
+After the model fit and before any conclusions are made we need to check:  <br>
+1. Normality of residuals <br>
+2. Homogeneity of variance of residuals  <br>
+3. Linearity of Y  <br>
+4. Independence of residuals</p>
+</font>
+
+## <span style="color:red">*4) Checking independence of residuals*</span>
+### a) Sequence plot $e_i$ vs $i$
+<font size="4"> The plotting $e_i \; against\; i$ i.e residuals vs time allows to determine if there is any correlation between error terms, such we can check the independence of residuals.</font>
+
+```{r}
+library(lawstat)
+library(latex2exp)
+re = my_model$residuals
+
+plot(re, main="Graph 3: Time Series Plot of the Residuals", xlab=TeX("i"), ylab=TeX("e_i"))
+lines(re)
+abline(h=0)
+
+```
+
+### b) Runs Test for Independence
+<br>
+<font size="4"><p>$H_0:\; e_i\; are\; independent\; i=1,2,...,n$ <br>
+$H_a:\; e_i\; are\; not\; independent\; i=1,2,...,n$ <br>
+Use R to calculate p.m.f. of random variable U <br>
+$p-value=\Pr(U\leq u)$ </p>
+</font>
+
+<span style="color:red"> <font size="4">*NOTE: For all Test I will use 95% CI* </font></span>
+
+```{r }
+ library(lawstat)
+ runs.test(re, plot.it=TRUE)
+```
+#### Note
+<font size="4">Here  A is non-negative residuals $e_i\geq0$, B is negative residuals $e_i<0$, u=8.
+p-value=0.001916 or 0.1916%
+</font>
+
+#### Comment 
+><font size="4">According to Graph 3 residuals are dependent,  as there is the repeated pattern, as $e_i$ firstly decreases then increases then decreases and so on with the increase of i. Any $e_j$ can be predicted by the previous resudials. So there exists cyclical nonindependence.<br>
+Also, The Run Test of Independence rejected $H_0:\; e_i\; are\; independent\; i=1,2,...,n$ as p-value of 2 sided Runs Test is 0.001916 or 0.1916% is less than $\frac{\alpha}{2}$ i.e. 0.025.
+Also, p-value=0.1916% is less than any usual used $\frac{\alpha}{2}$. Usually $\alpha$ is  $1 \leq\alpha\leq10$ in %. Then $0.5 \leq\frac{\alpha}{2}\leq5$ in %. So $H_a:\; e_i\; are\; not\; independent\; i=1,2,...,n$ is true. So, the graph 3 and The Run Test for Independence show the same conclusion, the dependence of residuals.
+</font>
+
+## <span style="color:red">*5) Checking normality of residuals*</span>
+
+<font size="4">To check the normality of residuals we can construct Normal Q-Q plot of the residuals. Here each residual is plotted against its expected value under normality.<br> Points located near/ on a straight line suggest that these residuals are normally distributed, whereas points that depart from a straight line suggest that these residuals are not normally distributed.</font>
+
+### a) Normal Q-Q Plot
+```{r}
+
+qqnorm(re)
+qqline(re)
+
+```
+```{r}
+hist(re, xlab='residuals', main='Graph 4: Histogram of residuals', freq=FALSE)
+curve(dnorm(x, mean(re), sd(re)), add=TRUE)
+```
+
+#### Comment
+> By Normal Q-Q Plot of residuals it is difficult to determine are residuals normal distributed, as residuals in the range of theoretical quantiles from -1 till 1 are lies very close or on a normal curve, so they are normally distributed and other residuals with theoretical quantiles > 1 or < -1 lie with the change of theoretical quantiles depart far away from normal curve.<br>
+According to graph 4, it is clear seen that residuals are normally distributed, as histogram has a normal curve's shape.<br>
+That's why I decided to conduct the Shapiro-Wilk test for normality of residuals.
+
+### b) Shapiro-Wilk Test for Normality <br>
+<font size="4">
+<br>
+$H_0: e_1,e_2,...,e_n\sim N$ <br>
+$H_a: e_1,e_2,...,e_n\nsim N$<br>
+
+Test statistics W and p-value is calculated by R.
+</font>
+
+```{r}
+shapiro.test(re)
+```
+
+#### Comment
+>By Shapiro-Wilk Test for Normality W=0.94328 and p-value =0.1017 or 10.17%. As I used 95% CI $\alpha=0.05\; or\; 5$%. $p-value=0.1017\;>\; \alpha=0.05$ so fail to reject $H_0: e_1,e_2,...,e_n\sim N$. It means the residuals are normally distributed.
+
+## <span style="color:red">*6) Checking Homogeneity of Variance and linearity of  $\hat{Y}_{i}$ *</span>
+
+### a) Residuals vs Fitted values plot for checking Homogeneity of Variance and linearity of  $\hat{Y}_{i}$
+<font size="4">To check the linearity and homogeneity of Variance assumptions, we can plot  Residuals $e_i$ vs Fitted values $\hat Y_i$ graph.
+If the variance of residuals is homogeneous, we expect to see a constant spread/distance of the residuals to the 0 line across all $\hat Y_i$ values. If the linear model is a good fit, we expect to see the residuals evenly spread on either side of the 0 line.
+</font>
+
+```{r}
+fits = my_model$fitted.values
+plot(re ~ fits, main="Graph 5: Residuals vs Fitted values", xlab=TeX("\\hat{Y}_i (age)"), ylab=TeX("e_i (age)"))
+#scatter.smooth(re ~ fits, main="Residuals vs Fitted values", xlab=TeX("\\hat{Y}_i (age)"), ylab=TeX("e_i (age)"))
+abline(h=0)
+```
+
+#### Comment
+> According to Graph 5 there is a constant spread/distance of the residuals to the 0 line across all $\hat Y_i$ values i.e. the residuals are chaotically distributed across y=0 line, there are no any patterns, for example, residuals do not depart from y=0 or become closer to y=0 with the increase of $\hat Y_i$. So there is a homogeneity of variance of residuals. Secondly, the linear model is a good fit, I do not see any pattern and the residuals evenly spread on either side of the 0 line.
+
+### b) Levene’s Test for Homogeneity of Variance
+
+<font size="4">Split responses (life expectancy in Canada) into ***t*** distinct groups based on predictor values (unemployment rate in Canada)<br>
+$H_0: \sigma_1^2=...=\sigma_t^2$<br>
+$H_a: \sigma_1^2\neq...\neq\sigma_t^2$<br>
+$Test\; Statistics\;(T.S.)\sim F_{t-1,n-t}$ <br>
+where t is number of groups, n is number of observations <br>
+The $p-value=\Pr(F_{t-1,n-t}\geq T.S.)$ </font>
+
+```{r}
+library(lawstat)
+#Look at plot Graph 1 to divide data into 3 groups
+breaks = c(6, 8,10, 12.1)
+groups = cut(unemplrate, breaks)
+levene.test(re, groups)
+```
+#### Comment
+>For applying Levene's Test I divided my data into 3 groups [$6\leq u.r.<8$, $8\leq u.r.<10$,$10\leq u.r.<12.1$ ] based on predictor values, unemployment rate (u.r.). The calculated p=0.504 or 50.4% and it is more than $\alpha=0.05 or 5%$ and even more than any usual $\alpha$. Usually $\alpha$ is  $1 \leq\alpha\leq10$ in %. So we fail to reject $H_0: \sigma_1^2=...=\sigma_t^2$, which means the variance of residuals is constant/homogeneous. So I got the same result as from graph 5: Residuals vs Fitted values <br>
+Note that the calculated p-value depends on how we divide our data into groups, what interval we used and on the number of intervals/groups. 
+
+## <span style="color:red">*7) Remedial Measures *</span>
+<font size="4">
+Remedial measures are some procedures that we can apply to fix problems of our Regression model such as  Nonlinear Relation, Non-Constant Variance,  Non-Independence of Errors, Non-Normality of Errors, Outliers. <br>
+
+According to the results of the tests and analysis of the plots, my Regression model holds only 3 basic assumptions of SLR such as linearity of Y, homogeneity of variance of residuals, normality of residuals. However, 2 assumptions such as independence of residuals and independence of predictor variable are not held by the model, as they are both dependent. To fix these problems I use 2 methods: Randomizing Data and Box-Cox transformation. After applying them I will decide which of them solved these problems.
+</font>
+
+### a) Randomizing data
+<font size="4">
+If we look at the table on which my project is based, it is clearly seen that the unemployment rate and corresponding to it life expectancy values are sorted by the year. As the data is taken from the Excel file, I created a new sheet with the same data in Excel and using function RAND() created a 4th column with random numbers. Then I sorted the rows of data table by this column. So I randomized my data. 
+</font>
+#### A new table with randomized table
+```{r}
+My_Data2 <- read_excel("Data.xlsx",sheet=3,range="A1:C32", col_names = TRUE)
+
+lifeexp2<-My_Data2$`Life expectancy at birth, total (years)`
+unemplrate2<-My_Data2$`Unemployment, total (% of total labor force) (national estimate)`
+
+My_Data2
+```
+#### Note
+<font size="4"> As I changed the corresponding index of the predictor variable X as I randomized the rows of my initial table. So the other graphs, results of tests and calculations that connected with the linear modeling, correlation coefficient and the homogeneity of variance, the linearity, the normality assumptions will not change. </font>
+<br>  
+<br>
+
+#### Checking the independence of residuals and predictor variable of the new regression model
+
+```{r}
+library(lawstat)
+library(latex2exp)
+
+my_model2=lm(lifeexp2~ unemplrate2, data=My_Data2)
+
+plot(unemplrate2, main="Graph 6: Sequence plot",ylab=TeX("Unemployment Rate (%)"))
+lines(unemplrate2)
+
+```
+
+#### Comment
+> According to Graph 6 unemployment rates, $x_i$ -s are independent, as there are no any patterns,so $x_i$ can not be predicted from previous unemployment rates $x_{i-1}$. 
+
+```{r}
+library(lawstat)
+re2 = my_model2$residuals
+
+#plot(re, main="Sequence plot")
+plot(re2, main="Graph 7: Time Series Plot of the Residuals", xlab=TeX("i"), ylab=TeX("e_i"))
+lines(re2)
+abline(h=0)
+ runs.test(re2, plot.it=TRUE)
+```
+
+#### Comment 
+><font size="4"> According to Graph 7 residuals are independent,  as there are no any patterns, as $e_i$ can not be predicted from $e_{i-1}$. <br>
+Also, The Run Test of Independence fails to reject $H_0:\; e_i\; are\; independent\; i=1,2,...,n$ as p-value of 2 sided Runs Test is 0.8595 or 85.95% is more than $\frac{\alpha}{2}=0.025$ or 2.5 %. Also, p-value=85.95% is more than any usual used $\frac{\alpha}{2}$. Usually $\alpha$ is  $1 \leq\alpha\leq10$ in %. Then $0.5 \leq\frac{\alpha}{2}\leq5$ in %. So we fail to reject $H_0:\; e_i\; are\; independent\; i=1,2,...,n$ at any usually used $\alpha$. So, the graph 7 and The Run Test for Independence show the same conclusion, the independence of residuals.<br>
+The randomizing data method was successful in solving the non-independence of residuals and the predictor variable problems.
+</font>
+
+### b) Box-Cox transformation
+<font size="4"> The Box-Cox transformation is used to fix the non-normality, non-constant variance and non-independence of residuals and nonlinear relation.
+<br>
+<br>
+$Transform\; the\; variable\; w\; as$
+\begin{equation*}
+\normalsize
+    w^{\lambda} = \left\{
+        \begin{array}{ll}
+            \frac{w^\lambda-1}{\lambda} & \quad \lambda\neq 0 \\
+            ln(w) & \quad \lambda =0
+        \end{array}
+    \right.
+\end{equation*}
+<br>
+The Box-Cox transformation can be applied to the predictor variable X and to the response variable Y. 
+<br>
+Software is used to estimate $\lambda$.
+<br>
+<br>
+Usually, we apply the Box-Cox transformation on the predictor variable X and on the response variable Y and from these 2 choose the best one, which makes the Regression model more appropriate. However, I will omit this step and apply the Box-Cox transformation on my predictor variable (unemployment rate) as I have the dependence of the predictor variable. Then I will analyze the appropriate graphs and make a conclusion about the efficiency of transformation. Was it successful in solving the dependence of the predictor variable and residuals problems?
+<br>
+<br>
+Also the Box-Cox function in R conducts 2 tests: the first test checks if $\lambda = or\neq 0$, the second test checks if there is a need to apply Box-Cox transformation.
+<br>
+<br>
+*Test 1* <br>
+$H_0:\;\lambda=0$ <br>
+$H_a:\;\lambda\neq0$ <br>
+<br>
+*Test 2* <br>
+$H_0:\; Need\; to\; apply\; the\; Box-Cox\; transformation$ <br>
+$H_a:\; No \; need\; to\; apply\; the\; Box-Cox\; transformation$ <br>
+</font> 
+
+```{r}
+library(car)
+
+boxcox = powerTransform(unemplrate)
+summary(boxcox)
+```
+
+#### Comment
+>The estimated $\lambda=-0.7897$, however p-value=0.4220 or 42.2% for Test 1 (Test for checking $\lambda= or \neq 0$) is more than $\alpha=0.05 or 5 %$ . So with 95% CI I failed to reject $H_0:\;\lambda=0$ and I can transform x with ln(x). The p-value=0.0701 or 7.01 % for Test 2 (Test for checking a need for applying the transformation) is more than $\alpha=0.05 or 5 %$ so I failed to reject H_0:\; Need\; to\; apply\; the\; Box-Cox\; transformation$. Despite that the transformation is not needed I want to apply it on the predictor variable to check will it solve the non-independence of residuals and predictor variable problems.
+
+```{r}
+library(lawstat)
+library(latex2exp)
+
+plot(lifeexp ~log(unemplrate) , data=My_Data, main="Graph 8: life expectancy vs ln(unemployment rate)", xlab="ln(unemployment rate)", ylab="life expectancy (age)")
+
+mod = lm(lifeexp ~ log(unemplrate), data=My_Data)
+abline(mod)
+
+re3=mod$residuals
+
+# Homogeneity of variance
+plot(re3~fitted.values(mod), main="Graph 9: Residuals vs Fitted values", xlab=TeX("\\hat{Y}_i (age)"),ylab="residuals")
+abline(h=0)
+
+# Normality
+hist(re3,main="Residuals Histogram",xlab="residuals", freq=FALSE)
+curve(dnorm(x, mean(re3), sd(re3)), add=TRUE)
+
+qqnorm(re3)
+qqline(re3)
+
+```
+
+#### Comment
+> Based on Graph 8, it can be seen that the regression line became more straight. On the graph 1 "Life expectancy ~ Total unemployment rate" the regression line is not perfectly straight. So I assume that the correlation coefficient of the new regression model will be less than r=-0.71531 (Found in **"2) Correlation coefficient"** section ) and closer to -1. As the new regression line fitted more points than the old one.<br>
+<br>
+Graph 9 looks like Graph 5 "Residuals vs Fitted values", there may be some small, non-significant changes. According to Graph 9, there is a constant spread/distance of the residuals to the 0 line across all $\hat Y_i$ values i.e. the residuals are chaotically distributed across y=0 line, there are no patterns. So there is a homogeneity of variance of residuals. Secondly, the linear model is a good fit, I do not see any pattern, and the residuals evenly spread on either side of the 0 line. <br>
+<br>
+The Normal Q-Q Plot of new residuals looks the same as the old Normal Q-Q Plot of residuals. The residuals in the range of theoretical quantiles from -1 till 1 are lie very close to or on the normal curve, so they are normally distributed, and other residuals with theoretical quantiles > 1 or < -1 lie with the change of theoretical quantiles depart far away from normal curve.<br>
+The Residual histogram looks the same as graph 4 "Histogram of residuals", it is clear seen that residuals are normally distributed, as the histogram has a normal curve's shape.<br>
+<br>
+To conclude, the Box-Cox transformation on the predictor variable (unemployment rate) only improved the linear relationship between X and Y. The new regression model holds the linearity, the normality, the homogeneity of variance assumptions.
+
+#### Checking the efficiency of the Box-Cox transformation in solving the non-independence problems.
+#### 1. Independence of residuals
+
+```{r}
+
+# Independence of residuals
+
+plot(re3,type="o",pch=22,main="Graph 10: Time Series Plot of the new Residuals", xlab="Order",ylab="residuals")
+abline(h=0)
+plot(re, main="Graph 3: Time Series Plot of the Residuals", xlab=TeX("i"), ylab=TeX("e_i"))
+lines(re)
+abline(h=0)
+
+ runs.test(re3, plot.it=FALSE)
+ 
+```
+
+#### Comment 
+><font size="4"> Graph 10:Time Series plot of new residuals looks the same as Graph 3:Time Series plot of the residuals, so the residuals are dependent,  as there is the repeated pattern, as values of the residuals firstly decrease, then increase, then decrease and so on with the increase of i. There exists cyclical nonindependence.<br>
+<br>
+Also, The Run Test of Independence rejected $H_0:\; e_i\; are\; independent\; i=1,2,...,n$ as p-value of 2 sided Runs Test is  0.0001259 or 0.01259% is less than $\frac{\alpha}{2}$ i.e. 0.025.Also, p-value=0.01259% is less than any usual used $\frac{\alpha}{2}$. Usually $\alpha$ is  $1 \leq\alpha\leq10$ in %. Then $0.5 \leq\frac{\alpha}{2}\leq5$ in %. So $H_a:\; e_i\; are\; not\; independent\; i=1,2,...,n$ is true.<br>
+<br>So, the graph 10 and The Run Test for Independence show the same conclusion, the dependence of residuals. The Box-Cox transformation on the predictor variable (unemployment rate) failed in fixing non-independence of residuals problem.
+</font>
+
+```{r}
+#Independence of X
+
+plot(log(unemplrate), main="Graph 9: Sequence plot",ylab=TeX("ln(Unemployment Rate)"))
+lines(log(unemplrate))
+
+plot(unemplrate, main="Graph 2: Sequence plot",ylab="unemployment rate (%)")
+lines(unemplrate)
+```
+
+#### Comment
+> Graph 9: Sequence plot looks the same as Graph 2: Sequence plot, the only difference is the range, as I took ln(X), where X is the unemployment rate. The reason why the graph 9 looks the same as graph 2, because the unemployment rate was in a range [6;12] and ln(x) is increasing function, so a range of ln(x) is [ln(6), ln(12)], when we take $ln(x_i)$, we just change the value of $x_i$ but not its position relatively to index and value of other $x_j$ as the data was not mixed.<br><br>
+According to Graph 9 new $x_i$ are dependent, as there is the repeated pattern, as new $x_i$ firstly decreases, then increases, then decreases and so on with the increase of i. There exists cyclical nonindependence. <br>
+<br>
+So, the graph 9 shows the dependence of residuals. The Box-Cox transformation on the predictor variable (unemployment rate) failed in fixing the non-independence of the predictor variable problem.
+
+# <span style="color:purple">*Conclusion*</span>
+
+### <span style="color:red">**Conclusion**</span>
+<font size="4">
+After conducting the appropriate tests and plotting appropriate graphs I came to the conclusion that there is a moderate inverse linear association between the unemployment rate of Canada and the life expectancy of the Canadian population, as r=-0.715. So my stated in the introduction hypothesis was verified, as the rise in the unemployment rate causes the fall in the life expectancy.
+<br><br>
+Also, after applying the studied on the lectures methods I found out the regression model holds the linearity, the homogeneity of variance, the normality assumptions. However, it violates the independence of the predictor variable and the independence of residuals assumptions.
+<br><br>
+To fix my simple linear regression model and to make it appropriate I applied 2 methods: Randomizing data and Box-Cox transformation on predictor variable (the unemployment rate). In Randomizing Data Method I sorted my data in Excel by the column of random numbers, so my data was randomly mixed. After applying them, I noticed that the Randomizing data method was successful in fixing the non-independence of residuals and predictor variable, while the Box-Cox transformation failed. <br>
+I assume that Box-cox transformation can fix the non-independence of residuals problem only when the regression model does not hold the linearity and the homogeneity of variance assumptions. Also, it is always useless in fixing the non-independence of the predictor variable problem, as it does not mix the data. 
+</font>
+
+### <span style="color:red">**Evaluation**</span>
+<font size="4">
+I would like to mention some suggestions that can improve my analysis: <br><br>
+**1. Find more organizations that gather the statistical data about the Unemployment rate of Canada. Take different data of the unemployment rate in Canada from different organizations and find the average of the unemployment rate.**<br>
+The unemployment rate of Canada, on which my whole analysis was based, was taken only from one resource, International Labour Organization, ILOSTAT database. Maybe this fact affected the gotten results, non-independence of the predictor variable.<br><br>
+**2. Use larger samples, try to find more observations of the unemployment rate and the life expectancy** <br>
+The larger size of sample you have, the more precise results you will get and the more accurate your regression model will be. <br><br>
+**3. Do not do extra work if there is no need **<br>
+During testing the need of Box-Cox transformation on the unemployment rate I got the p-value=0.0701 or 7.01 % and it is more than $\alpha=0.05 or 5 %$ so I failed to reject H_0:\; Need\; to\; apply\; the\; Box-Cox\; transformation$.<br>
+Despite that, the transformation was not needed I applied it and I did not get any significant changes and it does not fix the non-independence of residuals and predictor variable problems. I just wasted time.<br><br>
+**4. Study and apply other methods to fix the non-independence of residuals problem**<br>
+There is a whole chapter 12: "Autocorrelation in Time Series" in Kutner's "Applied Linear
+Statistical Models" textbook dedicated to fixing the non-independence of residuals. For example, I can use Cochrane-Orcutt Procedure to transform my regression model.
+</font>
+
+### <span style="color:blue">***References***</span>
+<font size="4">
+1. The data for the analysis was taken from DataBank of The World Bank: https://databank.worldbank.org .
+<br>
+2. The analysis is based on the lecture slides of week 1, week 2, week 3 of professor Zhenisbek Assylbekov and on Chapter 1, Chapter 2 and Chapter 3 of Kutner's "Applied Linear
+Statistical Models" textbook
+</font>
