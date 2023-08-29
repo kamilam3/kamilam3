@@ -1,4 +1,4 @@
-### All projects and assignments of 1st year Master of Science in Statistics - Analytics student at UIUC.
+### All projects and assignments of Master of Science in Statistics - Analytics student at UIUC.
 
 <!--
 **kamilam3/kamilam3** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
