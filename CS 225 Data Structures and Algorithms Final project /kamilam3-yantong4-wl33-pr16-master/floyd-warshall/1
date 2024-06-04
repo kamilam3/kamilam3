@@ -1,0 +1,180 @@
+
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
+#include "utility.h"
+#include "floyd.h"
+#define V 1400
+using namespace std;
+using namespace waikiki;
+
+
+void floydWarshall(vector<vector<double>> adjMatrix_ref){
+
+    std::cout << "inside Graph::floydWarshall" << std::endl;
+    //int dist[V][V];
+    std::cout<< "line 22" << std::endl;
+    //std::cout << adjMatrix_ref[347][1583] << std::endl;
+    
+   /*for (int i = 0; i < adjMatrix_ref.size(); i++){
+        for (int j = 0; j < adjMatrix_ref.size(); j++){
+            if(adjMatrix_ref[i][j]!=0){
+                std::cout<< i << std::endl;
+                std::cout<< j << std::endl;  
+                std::cout<< adjMatrix_ref[i][j] << std::endl;
+                //dist[i][j] = adjMatrix_ref[i][j];
+           }
+        }
+    }
+   */
+   std::cout << "adjMatrix_ref.size()" << std::endl;
+   std::cout << adjMatrix_ref.size() << std::endl;//7698
+
+
+   std::cout << "adjMatrix_ref[0].size()" << std::endl;
+   std::cout << adjMatrix_ref[0].size() << std::endl;//7698
+
+   std::cout<< "line 30" << std::endl;
+    for (int k = 0; k < adjMatrix_ref.size(); k++) {
+      for (int i = 0; i < adjMatrix_ref.size(); i++) {
+          for (int j = 0; j < adjMatrix_ref.size(); j++) {
+               
+               if(adjMatrix_ref[i][j]!=0){
+                   std::cout<< adjMatrix_ref[i][j] << std::endl;
+               } 
+               if((adjMatrix_ref[i][k] + adjMatrix_ref[k][j])!=0){
+                   std::cout<<(adjMatrix_ref[i][k] + adjMatrix_ref[k][j])<<std::endl;
+               }
+              if (adjMatrix_ref[i][j] > (adjMatrix_ref[i][k] + adjMatrix_ref[k][j])
+                  && (adjMatrix_ref[k][j] != INF
+                        && adjMatrix_ref[i][k] != INF)){
+                    adjMatrix_ref[i][j] = adjMatrix_ref[i][k] + adjMatrix_ref[k][j];
+              }
+          }
+      }
+   }
+}
+
+
+int main()
+{
+    /**
+    * parameters setup
+    **/
+    // used for data parsing
+    vector<int> airportID;
+    vector<double> airportlat;
+    vector<double> airportlng;
+    vector<int> sourceID;
+    vector<int> destinationID;
+
+    // used for adjacency matrix
+    vector<vector<double>> adjMatrix;
+    vector<vector<double>> &adjMatrix_ref = adjMatrix;
+    /**
+     * data parsing
+    **/
+    std::string line;
+    //data parse for airportID file
+    std::ifstream airportFile("airports.dat");
+    //if not open throw an exception
+    if(!airportFile.is_open()) {
+        throw graph_excepts::airport_parse_error("File not opened");
+    }
+    string id, name, city, country, iata, icao, lat, lng;
+
+    while(std::getline(airportFile, line)) {
+        stringstream ss(line);
+        getline(ss, id, ',');
+        getline(ss, name, ',');
+        getline(ss, city, ',');
+        getline(ss, country, ',');
+        getline(ss, iata, ',');
+        getline(ss, icao, ',');
+        getline(ss, lat, ',');
+        getline(ss, lng, ',');
+
+        std::stringstream ID(id);
+        int idvec;
+        ID >> idvec;
+        airportID.push_back(idvec); // airport ID stored
+        std::stringstream la(lat);
+        double latvec;
+        la >> latvec;
+        airportlat.push_back(latvec); // airport latitude stored
+        std::stringstream lo(lng);
+        double lngvec;
+        lo >> lngvec;
+        airportlng.push_back(lngvec); // airport longitude stored
+    }
+
+    //data parse for route file
+    std::ifstream routesFile("routes.dat");
+    // if not open throw an exception
+    if (!routesFile.is_open()) {
+        throw graph_excepts::airport_parse_error("File not opened");
+    }
+    string airline, airlineid, sairport, source, dairport, destination;
+
+    while (std::getline(routesFile, line)) {
+        stringstream ss(line);
+        getline(ss, airline, ',');
+        getline(ss, airlineid, ',');
+        getline(ss, sairport, ',');
+        getline(ss, source, ',');
+        getline(ss, dairport, ',');
+        getline(ss, destination, ',');
+
+        std::stringstream sid(source);
+        int sID;
+        sid >> sID;
+        sourceID.push_back(sID); // source ID stored
+        std::stringstream did(destination);
+        int dID;
+        did >> dID;
+        destinationID.push_back(dID); // destination ID stored
+    }
+
+    // test for data parsing
+    for (int i = 0; i < sourceID.size(); i++) {
+        //std::cout << sourceID[i] << std::endl;
+    }
+
+    std::cout << airportID.size() << std::endl;
+    std::cout << airportlat.size() << std::endl;
+    std::cout << airportlng.size() << std::endl;
+    std::cout << sourceID.size() << std::endl;
+    std::cout << destinationID.size()<< std::endl;
+    /**
+     * building adjacency matrix
+     **/
+    Graph g(adjMatrix_ref, airportID, sourceID, destinationID, airportlat, airportlng); // initialize adjmat with parsed data
+     std::cout << adjMatrix_ref[347][1583] << std::endl;
+    floydWarshall(adjMatrix_ref);
+
+
+
+
+    // test for adjacency matrix
+    int countzero = 0;
+    int countother = 0;
+    for(int i = 0; i < adjMatrix.size();i++) {
+        for(int j = 0; j < adjMatrix[i].size();j++) {
+            if(adjMatrix[i][j] == 0) {
+                countzero++;
+                continue;
+            } else {
+                countother++;
+            }
+           // std::cout << adjMatrix[i][j] << std::endl;
+        }
+    }
+
+    //std::cout << countzero << std::endl;
+    //std::cout << countother << std::endl;
+
+    return 0; 
+}
