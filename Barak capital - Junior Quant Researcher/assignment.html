@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barak Capital — Home Assignment: Exchange Delay Prediction</title>
+<style>
+  :root {
+    --bg-primary: #0f1726;
+    --bg-secondary: #1a2332;
+    --bg-tertiary: #1e293b;
+    --bg-card: #1c2a3d;
+    --bg-code: #0d1520;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --accent-glow: rgba(59, 130, 246, 0.15);
+    --border: #2a3a50;
+    --border-light: #334155;
+    --gold: #f59e0b;
+    --gold-light: #fbbf24;
+    --red: #ef4444;
+    --red-soft: #fca5a5;
+    --green: #22c55e;
+    --green-soft: #86efac;
+    --amber: #f59e0b;
+    --orange: #f97316;
+    --cost-0: #166534;
+    --cost-1: #a16207;
+    --cost-2: #c2410c;
+    --cost-3: #b91c1c;
+    --cost-4: #991b1b;
+    --cost-8: #7f1d1d;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-size: 15.5px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ---- Header ---- */
+  header {
+    background: linear-gradient(135deg, #0f1726 0%, #162035 50%, #1a2744 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 0 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--gold), var(--accent));
+  }
+
+  .firm-name {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .firm-name::before,
+  .firm-name::after {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  header h1 {
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  header h1 strong {
+    font-weight: 600;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  /* ---- Main ---- */
+  main {
+    padding: 48px 0 80px;
+  }
+
+  /* ---- Section ---- */
+  section {
+    margin-bottom: 48px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.3px;
+  }
+
+  h2 .section-number {
+    color: var(--accent-light);
+    font-weight: 400;
+    margin-right: 8px;
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 28px 0 14px;
+  }
+
+  p {
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ---- Tables ---- */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 18px 0 24px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead th {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  tbody td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background: rgba(59, 130, 246, 0.04);
+  }
+
+  td code, p code, li code {
+    background: var(--bg-code);
+    color: var(--accent-light);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 13px;
+    border: 1px solid var(--border);
+  }
+
+  /* ---- Cost Matrix ---- */
+  .cost-matrix {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 18px 0 24px;
+  }
+
+  .cost-matrix table {
+    font-size: 14px;
+  }
+
+  .cost-matrix thead th {
+    text-align: center;
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+
+  .cost-matrix thead th:first-child {
+    text-align: left;
+    min-width: 150px;
+  }
+
+  .cost-matrix tbody td {
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 12px 16px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cost-matrix tbody td:first-child {
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .cost-0 {
+    background: rgba(22, 101, 52, 0.35);
+    color: var(--green-soft) !important;
+  }
+
+  .cost-1 {
+    background: rgba(161, 98, 7, 0.25);
+    color: var(--gold-light) !important;
+  }
+
+  .cost-2 {
+    background: rgba(194, 65, 12, 0.25);
+    color: #fdba74 !important;
+  }
+
+  .cost-3 {
+    background: rgba(185, 28, 28, 0.25);
+    color: var(--red-soft) !important;
+  }
+
+  .cost-4 {
+    background: rgba(153, 27, 27, 0.3);
+    color: var(--red-soft) !important;
+  }
+
+  .cost-8 {
+    background: rgba(127, 29, 29, 0.4);
+    color: #fecaca !important;
+    font-size: 18px !important;
+  }
+
+  /* ---- Code Blocks ---- */
+  pre {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+
+  pre .cmd { color: var(--accent-light); }
+  pre .flag { color: var(--gold-light); }
+  pre .arg { color: var(--green-soft); }
+  pre .file { color: #c4b5fd; }
+
+  /* ---- Callout Boxes ---- */
+  .callout {
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-left: 4px solid;
+  }
+
+  .callout-warning {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: var(--red);
+  }
+
+  .callout-warning .callout-title {
+    color: var(--red);
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .callout-warning .callout-title::before {
+    content: '\26A0';
+    font-size: 16px;
+  }
+
+  .callout-info {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: var(--accent);
+  }
+
+  .callout-info .callout-title {
+    color: var(--accent-light);
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .callout-info .callout-title::before {
+    content: '\2139';
+    font-size: 16px;
+  }
+
+  .callout p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.65;
+  }
+
+  .callout p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---- Ordered Lists ---- */
+  ol {
+    counter-reset: item;
+    list-style: none;
+    padding: 0;
+    margin: 14px 0;
+  }
+
+  ol > li {
+    counter-increment: item;
+    padding: 8px 0 8px 36px;
+    position: relative;
+    color: var(--text-secondary);
+  }
+
+  ol > li::before {
+    content: counter(item) ".";
+    position: absolute;
+    left: 0;
+    color: var(--accent-light);
+    font-weight: 600;
+    font-size: 14px;
+    width: 24px;
+    text-align: right;
+  }
+
+  /* ---- Evaluation List ---- */
+  .eval-list {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0;
+    counter-reset: eval;
+  }
+
+  .eval-list li {
+    counter-increment: eval;
+    padding: 12px 16px 12px 52px;
+    position: relative;
+    margin-bottom: 8px;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .eval-list li::before {
+    content: counter(eval);
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .eval-list li strong {
+    color: var(--text-primary);
+  }
+
+  /* ---- Formula ---- */
+  .formula {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 24px;
+    margin: 16px 0;
+    text-align: center;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 15px;
+    color: var(--accent-light);
+    letter-spacing: 0.5px;
+  }
+
+  /* ---- Category pills ---- */
+  .cat-low { color: #4ade80; font-weight: 600; }
+  .cat-medium { color: #facc15; font-weight: 600; }
+  .cat-high { color: #fb923c; font-weight: 600; }
+  .cat-extreme { color: #f87171; font-weight: 600; }
+
+  /* ---- Data grid ---- */
+  .data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin: 18px 0 24px;
+  }
+
+  .data-grid .channel-block {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+
+  .data-grid .channel-block h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-light);
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+  }
+
+  .data-grid .channel-block .date-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(42, 58, 80, 0.5);
+  }
+
+  .data-grid .channel-block .date-row:last-child {
+    border-bottom: none;
+  }
+
+  .data-grid .channel-block .date-row .size {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- Footer ---- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    text-align: center;
+  }
+
+  .footer-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .footer-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--border-light);
+    margin: 0 auto 16px;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 640px) {
+    .container {
+      padding: 0 18px;
+    }
+
+    header {
+      padding: 40px 0 36px;
+    }
+
+    header h1 {
+      font-size: 24px;
+    }
+
+    .firm-name {
+      font-size: 12px;
+      letter-spacing: 3px;
+    }
+
+    table {
+      font-size: 13px;
+    }
+
+    thead th, tbody td {
+      padding: 8px 10px;
+    }
+
+    .callout {
+      padding: 16px 18px;
+    }
+
+    pre {
+      padding: 14px 16px;
+      font-size: 12.5px;
+    }
+
+    .data-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header>
+  <div class="container">
+    <div class="firm-name">Barak Capital</div>
+    <h1>Home Assignment: <strong>Exchange Delay Prediction</strong></h1>
+    <p class="subtitle">Quantitative Trading &mdash; Latency Analysis</p>
+  </div>
+</header>
+
+<!-- ==================== MAIN ==================== -->
+<main class="container">
+
+  <!-- -------- Overview -------- -->
+  <section>
+    <h2><span class="section-number">01</span> Overview</h2>
+
+    <h3 style="color: var(--accent-light); margin-top: 16px;">Background</h3>
+    <p>In high-frequency trading, the network delay between an exchange and our servers is not constant &mdash; it fluctuates over time and can shift between distinct regimes. Understanding and anticipating these shifts is operationally valuable: if we know that delays are about to spike, we can adjust quoting strategies, widen risk thresholds, or temporarily reduce exposure.</p>
+    <p>Many factors influence network delay. The exchange&rsquo;s internal matching engine processes messages at varying speeds depending on its load &mdash; during periods of intense trading activity (e.g., around economic announcements or large order bursts), the exchange may queue messages, inflating delay. Network infrastructure between the exchange and our co-located servers introduces its own variability: congestion on shared network paths, switch buffering, and even time-of-day patterns in overall market traffic can all leave fingerprints in the delay distribution. Finally, correlated products often share infrastructure at the exchange side, so a delay spike on one channel can be an early warning signal for a spike on a related channel shortly after.</p>
+
+    <h3 style="color: var(--accent-light); margin-top: 24px;">The Task</h3>
+    <p>You are given historical message logs from the <strong>Narnia Stock Exchange (NSE)</strong> for two correlated products: <strong>Stock_A</strong> and <strong>Stock_B</strong>. Each product is published on a separate exchange channel.</p>
+    <p>At each message arrival, your model must answer: <em>&ldquo;If a message arrived right now, what would its delay be?&rdquo;</em> More precisely, for each message at position <em>i</em>, predict the <strong>numeric delay in nanoseconds</strong> of that message &mdash; using only information from messages 0 through <em>i&minus;1</em> (and cross-channel data up to the current time).</p>
+  </section>
+
+  <!-- -------- Data -------- -->
+  <section>
+    <h2><span class="section-number">02</span> Data</h2>
+    <p>You receive <strong>10 days</strong> of data for each of the 2 channels (20 CSV files total):</p>
+
+    <div class="data-grid">
+      <div class="channel-block">
+        <h4>Stock_A</h4>
+        <div class="date-row"><span>2026-03-03</span><span class="size">~502K rows</span></div>
+        <div class="date-row"><span>2026-03-05</span><span class="size">~388K rows</span></div>
+        <div class="date-row"><span>2026-03-09</span><span class="size">~322K rows</span></div>
+        <div class="date-row"><span>2026-03-11</span><span class="size">~220K rows</span></div>
+        <div class="date-row"><span>2026-03-16</span><span class="size">~230K rows</span></div>
+        <div class="date-row"><span>2026-03-20</span><span class="size">~347K rows</span></div>
+        <div class="date-row"><span>2026-03-23</span><span class="size">~296K rows</span></div>
+        <div class="date-row"><span>2026-04-01</span><span class="size">~283K rows</span></div>
+        <div class="date-row"><span>2026-04-07</span><span class="size">~329K rows</span></div>
+        <div class="date-row"><span>2026-04-15</span><span class="size">~157K rows</span></div>
+      </div>
+      <div class="channel-block">
+        <h4>Stock_B</h4>
+        <div class="date-row"><span>2026-03-03</span><span class="size">~218K rows</span></div>
+        <div class="date-row"><span>2026-03-05</span><span class="size">~184K rows</span></div>
+        <div class="date-row"><span>2026-03-09</span><span class="size">~165K rows</span></div>
+        <div class="date-row"><span>2026-03-11</span><span class="size">~238K rows</span></div>
+        <div class="date-row"><span>2026-03-16</span><span class="size">~183K rows</span></div>
+        <div class="date-row"><span>2026-03-20</span><span class="size">~243K rows</span></div>
+        <div class="date-row"><span>2026-03-23</span><span class="size">~192K rows</span></div>
+        <div class="date-row"><span>2026-04-01</span><span class="size">~247K rows</span></div>
+        <div class="date-row"><span>2026-04-07</span><span class="size">~193K rows</span></div>
+        <div class="date-row"><span>2026-04-15</span><span class="size">~107K rows</span></div>
+      </div>
+    </div>
+
+    <p>Each CSV has 3 columns:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>message_type</code></td><td>string</td><td><code>"Ticker"</code> or <code>"MarketChange"</code></td></tr>
+          <tr><td><code>sending_time</code></td><td>int64</td><td>Exchange sending timestamp (nanoseconds, UTC)</td></tr>
+          <tr><td><code>arrival_time</code></td><td>int64</td><td>Server arrival timestamp (nanoseconds, UTC, clock-corrected)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The <strong>network delay</strong> of a message is:</p>
+    <div class="formula">delay &nbsp;=&nbsp; arrival_time &minus; sending_time &nbsp;&nbsp;&nbsp; <span style="color: var(--text-muted); font-size: 13px;">(nanoseconds)</span></div>
+  </section>
+
+  <!-- -------- Prediction Task -------- -->
+  <section>
+    <h2><span class="section-number">03</span> Prediction Task</h2>
+    <p>For each channel independently, at every message position <em>i</em>, predict the <strong>delay of message <em>i</em> in nanoseconds</strong>. At the time of prediction, you know the <code>arrival_time</code> and <code>message_type</code> of message <em>i</em> (the message has arrived at your server), but you do <strong>not</strong> know its <code>sending_time</code> &mdash; that is what you are estimating. Your prediction for message <em>i</em> may use all columns of messages 0 through <em>i&minus;1</em> on the same channel, plus any messages from the other channel with <code>arrival_time &lt; arrival_time</code> of message <em>i</em> on the same channel.</p>
+
+    <h3>Constraints</h3>
+    <ol>
+      <li><strong>Online only.</strong> Your model must be causal &mdash; at position <em>i</em>, you may only use data from messages 0 through <em>i&minus;1</em> (no look-ahead).</li>
+      <li><strong>Two separate predictions.</strong> You must produce a prediction stream for Stock_A and a prediction stream for Stock_B. Cross-channel information is allowed.</li>
+      <li><strong>Language.</strong> You may use any programming language and any libraries or frameworks you wish.</li>
+      <li><strong>No external data.</strong> You may not use any data beyond the provided CSV files.</li>
+      <li><strong>Warm-up period.</strong> The first 1,000 messages of each day will not be evaluated. You may output any prediction for these rows &mdash; use them to initialize your model.</li>
+    </ol>
+  </section>
+
+  <!-- -------- Evaluation -------- -->
+  <section>
+    <h2><span class="section-number">04</span> Evaluation</h2>
+    <p>Your model will be evaluated on <strong>hidden test dates</strong> (same exchange, same products, different days). The test data has similar characteristics to the training days but is not identical.</p>
+
+    <h3>Scoring</h3>
+    <p>Predictions are scored using <strong>Mean Squared Error (MSE)</strong> between your predicted delay and the actual delay, both in nanoseconds:</p>
+
+    <div class="formula">MSE &nbsp;=&nbsp; &frac1n &nbsp;&sum; &nbsp;(predicted_delay<sub>i</sub> &minus; actual_delay<sub>i</sub>)&sup2; &nbsp;&nbsp;&nbsp; <span style="color: var(--text-muted); font-size: 13px;">(lower is better)</span></div>
+
+    <p style="margin-top: 12px;">Where <code>actual_delay<sub>i</sub> = arrival_time<sub>i</sub> &minus; sending_time<sub>i</sub></code> and the sum runs over all evaluated messages (excluding the first 1,000 warm-up messages per day).</p>
+
+    <p>We will also report <strong>RMSE</strong> (root mean squared error) for interpretability &mdash; RMSE is in the same nanosecond units as the delay itself, making it easier to judge how close your predictions are in absolute terms.</p>
+
+    <h3>Submission Format</h3>
+
+    <p>Your submission must include <strong>one designated runnable entry-point script</strong> that accepts paths to both channel files for a given day and an output directory, and produces two prediction CSVs. You are <strong>not</strong> limited to a single code file &mdash; feel free to split your solution across as many supporting modules, helper files, model artefacts, or utility scripts as you find useful. The only requirement is that one specific file is the entry point we invoke as shown below.</p>
+
+    <p>Example invocation:</p>
+    <pre><span class="cmd">python</span> <span class="file">your_solution.py</span> <span class="flag">--stock_a</span> <span class="arg">path/to/Stock_A_20260310.csv</span> <span class="flag">--stock_b</span> <span class="arg">path/to/Stock_B_20260310.csv</span> <span class="flag">--output_dir</span> <span class="arg">path/to/output/</span></pre>
+
+    <p>This should produce two files in the output directory:</p>
+    <ul style="margin: 8px 0 16px 24px;">
+      <li><code>predictions_Stock_A.csv</code></li>
+      <li><code>predictions_Stock_B.csv</code></li>
+    </ul>
+
+    <p>Each output CSV must have these columns:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>sending_time</code></td><td>The <code>sending_time</code> of message <em>i</em> (for row alignment)</td></tr>
+          <tr><td><code>arrival_time</code></td><td>The <code>arrival_time</code> of message <em>i</em></td></tr>
+          <tr><td><code>prediction</code></td><td>Your predicted delay for message <em>i</em>, in nanoseconds (int64)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The <strong>first 1,000 messages</strong> of each day will <strong>not be evaluated</strong> (warm-up period). You may output any value for these rows. All subsequent rows must have a valid numeric prediction.</p>
+
+    <h3>Write-Up</h3>
+    <p>In addition to your code, submit a <strong>PDF document (maximum 5 pages)</strong> describing:</p>
+    <ul style="margin: 8px 0 16px 24px;">
+      <li>Your approach and the reasoning behind it</li>
+      <li>What features you extracted and why</li>
+      <li>What methods, models, and libraries you used</li>
+      <li>What you tried that didn&rsquo;t work, and what you&rsquo;d improve with more time</li>
+    </ul>
+  </section>
+
+  <!-- -------- What We Look For -------- -->
+  <section>
+    <h2><span class="section-number">05</span> What We Look For</h2>
+
+    <ol class="eval-list">
+      <li><strong>Algorithmic thinking</strong> &mdash; what features did you extract? How did you model the problem? What did you try?</li>
+      <li><strong>Write-up quality</strong> &mdash; clear, concise PDF that helps us understand your thought process</li>
+      <li><strong>Code quality</strong> &mdash; clean, readable, well-structured, runnable code</li>
+      <li><strong>Prediction quality</strong> &mdash; low MSE on hidden test days</li>
+    </ol>
+  </section>
+
+  <!-- -------- Good Luck -------- -->
+  <section style="text-align: center; padding: 32px 0 0;">
+    <p style="font-size: 18px; color: var(--text-primary); font-weight: 400; letter-spacing: 0.3px;">Good luck.</p>
+  </section>
+
+  <!-- -------- Technical Notes -------- -->
+  <section>
+    <h2><span class="section-number">06</span> Technical Notes</h2>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">Important &mdash; Do Not Open CSV Files in Excel</div>
+      <p>The timestamp columns (<code>sending_time</code>, <code>arrival_time</code>) are <strong>int64 nanosecond values</strong> (19 digits). Excel silently converts large integers to float64, which only has ~15.9 significant digits &mdash; this truncates the last 3&ndash;4 digits and will corrupt your delay calculations.</p>
+      <p>Use <strong>Python / pandas</strong>, a <strong>text editor</strong>, or any tool that preserves int64 to inspect the files.</p>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-title">Note on Timestamp Resolution</div>
+      <p>You may notice that the <code>sending_time</code> field has its last 3 digits as <code>000</code>. This is an artifact of the recording pipeline, not a bug. The <code>arrival_time</code> field has full nanosecond resolution. The delay (<code>arrival_time &minus; sending_time</code>) is accurate to within &plusmn;500&nbsp;ns, which is negligible for this task.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="container">
+    <div class="footer-divider"></div>
+    <p class="footer-text">Barak Capital &mdash; Confidential</p>
+  </div>
+</footer>
+
+</body>
+</html>
