@@ -1,0 +1,7 @@
+evaluation_start,method,annual_volatility,variance_difference_vs_equal_weight,simultaneously_significant
+2023-01-02,equal_weight,0.08880850140146625,0.0,False
+2023-01-02,inverse_volatility,0.08905122326490822,4.31704438022979e-05,False
+2023-01-02,minimum_variance,0.08590432011322169,-0.0005073977070593677,False
+2024-01-02,equal_weight,0.11096088138529568,0.0,False
+2024-01-02,inverse_volatility,0.11103270398515677,1.5944156453794658e-05,False
+2024-01-02,minimum_variance,0.10744245077729264,-0.0007684369687707052,False

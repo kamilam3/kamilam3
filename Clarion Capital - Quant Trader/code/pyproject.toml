@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "burden-of-proof"
+version = "0.1.0"
+description = "Reproducible walk-forward allocation bake-off and significance analysis"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy==2.2.6",
+  "pandas==2.3.3",
+  "pillow==12.3.0",
+  "python-dateutil==2.9.0.post0",
+  "pytz==2026.2",
+  "reportlab==5.0.0",
+  "six==1.17.0",
+  "tzdata==2026.2",
+]
+
+[tool.setuptools]
+py-modules = [
+  "allocators",
+  "backtest",
+  "cov_estimators",
+  "evaluation",
+  "figures",
+  "run_analysis",
+  "tune_and_evaluate",
+]
+
+[project.scripts]
+burden-of-proof = "run_analysis:main"

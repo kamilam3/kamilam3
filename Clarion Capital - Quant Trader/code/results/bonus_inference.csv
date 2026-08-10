@@ -1,0 +1,4 @@
+comparison,annual_variance_difference,simultaneous_ci_low,simultaneous_ci_high,familywise_p_value
+inverse_volatility minus equal_weight,4.331167969932973e-05,-0.00011750051773867527,0.00020412387713733473,0.79
+minimum_variance minus equal_weight,-5.4795101542055776e-05,-0.0010534965901085112,0.0009439063870243996,0.9943
+minimum_variance_oas minus equal_weight,-0.00022940916896795435,-0.0011741577948522603,0.0007153394569163515,0.8284

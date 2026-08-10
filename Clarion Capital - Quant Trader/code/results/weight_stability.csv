@@ -1,0 +1,4 @@
+method,mean_one_way_turnover,median_one_way_turnover,max_one_way_turnover
+equal_weight,0.0,0.0,0.0
+inverse_volatility,0.020543681114897343,0.01970697839373039,0.036185363728295686
+minimum_variance,0.20216552890187037,0.13866933119854968,0.5173984175239992

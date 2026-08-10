@@ -1,0 +1,2 @@
+[console_scripts]
+burden-of-proof = run_analysis:main

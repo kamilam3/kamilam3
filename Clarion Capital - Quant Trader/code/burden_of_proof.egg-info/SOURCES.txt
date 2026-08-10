@@ -1,0 +1,15 @@
+README.md
+allocators.py
+backtest.py
+cov_estimators.py
+evaluation.py
+figures.py
+pyproject.toml
+run_analysis.py
+tune_and_evaluate.py
+burden_of_proof.egg-info/PKG-INFO
+burden_of_proof.egg-info/SOURCES.txt
+burden_of_proof.egg-info/dependency_links.txt
+burden_of_proof.egg-info/entry_points.txt
+burden_of_proof.egg-info/requires.txt
+burden_of_proof.egg-info/top_level.txt
